@@ -59,8 +59,13 @@ export const getEventById = async (req, res) => {
 
 export const getEventsByType = async (req, res) => {
   try {
-    const type_id = parseInt(req.params.type_id);
-    const events = await Event.find({ type_id });
+    const type_id_param = req.params.type_id;
+    const events = await Event.find({
+      $or: [
+        { type_id: type_id_param },
+        { type_id: parseInt(type_id_param) || 0 }
+      ]
+    });
     
     const detailedEvents = await Promise.all(
       events.map(async (event) => {

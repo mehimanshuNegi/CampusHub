@@ -28,7 +28,7 @@ const eventSchema = new mongoose.Schema({
     required: true
   },
   type_id: {
-    type: Number,
+    type: mongoose.Schema.Types.Mixed,
     required: true
   },
   createdBy: {
