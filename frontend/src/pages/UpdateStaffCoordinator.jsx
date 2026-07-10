@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import Footer from '../components/Footer';
 import { UserCheck } from 'lucide-react';
@@ -15,7 +15,7 @@ const UpdateStaffCoordinator = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(`/api/coordinators/staff/${id}`, {
+      const res = await api.put(`/coordinators/staff/${id}`, {
         name,
         phone
       });
@@ -29,7 +29,7 @@ const UpdateStaffCoordinator = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AdminNavbar />
-      
+
       <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '120px 24px 60px 24px' }}>
         <div style={{ width: '100%', maxWidth: '460px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>

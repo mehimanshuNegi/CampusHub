@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Search, Calendar, User, MapPin, ClipboardList, CheckCircle, AlertTriangle, Key, Hash, XCircle, CreditCard, Clock } from 'lucide-react';
@@ -27,7 +27,7 @@ const RegisteredEvent = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.post('/api/participants/verify', formData);
+      const res = await api.post('/participants/verify', formData);
       setDetails(res.data);
       setStatus('Active');
       setStep(2);
@@ -43,7 +43,7 @@ const RegisteredEvent = () => {
       setLoading(true);
       setError('');
       try {
-        const res = await axios.post('/api/participants/cancel', formData);
+        const res = await api.post('/participants/cancel', formData);
         alert(res.data.message || 'Registration cancelled successfully.');
         setStatus('Cancelled');
       } catch (err) {
@@ -57,10 +57,10 @@ const RegisteredEvent = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      
+
       <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '120px 24px 60px 24px' }}>
         <div style={{ width: '100%', maxWidth: '520px' }}>
-          
+
           {step === 1 && (
             <div>
               <div style={{ textAlign: 'center', marginBottom: '30px' }}>
@@ -246,20 +246,20 @@ const RegisteredEvent = () => {
                       <span style={{
                         display: 'inline-flex', alignItems: 'center', gap: '5px',
                         background: details.paymentStatus === 'Verified' ? 'rgba(16,185,129,0.12)'
-                                  : details.paymentStatus === 'Rejected' ? 'rgba(239,68,68,0.12)'
-                                  : 'rgba(245,158,11,0.12)',
+                          : details.paymentStatus === 'Rejected' ? 'rgba(239,68,68,0.12)'
+                            : 'rgba(245,158,11,0.12)',
                         color: details.paymentStatus === 'Verified' ? '#059669'
-                             : details.paymentStatus === 'Rejected' ? '#dc2626'
-                             : '#d97706',
+                          : details.paymentStatus === 'Rejected' ? '#dc2626'
+                            : '#d97706',
                         border: details.paymentStatus === 'Verified' ? '1px solid rgba(16,185,129,0.3)'
-                              : details.paymentStatus === 'Rejected' ? '1px solid rgba(239,68,68,0.3)'
-                              : '1px solid rgba(245,158,11,0.3)',
+                          : details.paymentStatus === 'Rejected' ? '1px solid rgba(239,68,68,0.3)'
+                            : '1px solid rgba(245,158,11,0.3)',
                         fontSize: '12px', fontWeight: '700', padding: '3px 10px',
                         borderRadius: '50px', textTransform: 'uppercase'
                       }}>
                         {details.paymentStatus === 'Verified' ? <CheckCircle size={12} />
                           : details.paymentStatus === 'Rejected' ? <XCircle size={12} />
-                          : <Clock size={12} />}
+                            : <Clock size={12} />}
                         {details.paymentStatus || 'Verified'}
                       </span>
                     </div>

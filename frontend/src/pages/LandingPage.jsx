@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { ArrowRight, Code, Gamepad2, Music, Palette, BookOpen, User, Mail, Phone, MapPin, Calendar, HelpCircle } from 'lucide-react';
 import EventImage from '../components/EventImage';
 
@@ -13,7 +13,7 @@ const LandingPage = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get('/api/events');
+        const res = await api.get('/events');
         setFeaturedEvents(res.data.slice(0, 3));
       } catch (error) {
         console.error('Error fetching featured events:', error);
@@ -62,7 +62,7 @@ const LandingPage = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      
+
       {/* Hero Section */}
       <section style={{
         background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(49, 46, 129, 0.85)), url(/images/cs03.jpg) center center/cover no-repeat',
@@ -123,8 +123,8 @@ const LandingPage = () => {
               textDecoration: 'none',
               transition: 'all 0.25s ease'
             }}
-            onMouseOver={(e) => { e.target.style.background = 'rgba(255,255,255,0.1)'; }}
-            onMouseOut={(e) => { e.target.style.background = 'transparent'; }}
+              onMouseOver={(e) => { e.target.style.background = 'rgba(255,255,255,0.1)'; }}
+              onMouseOut={(e) => { e.target.style.background = 'transparent'; }}
             >
               View Registration
             </Link>
@@ -336,7 +336,7 @@ const LandingPage = () => {
               About CampusHub
             </h2>
           </div>
-          
+
           <p style={{ fontSize: '15px', color: 'var(--text-dark)', marginBottom: '16px', lineHeight: '1.7' }}>
             CampusHub is an activities portal designed to centralize college event registrations, coordinate listings, schedule details, and facilitator outreach.
           </p>

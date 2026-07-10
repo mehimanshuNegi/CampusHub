@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Lock, Shield, Eye, EyeOff, Mail } from 'lucide-react';
@@ -16,10 +16,10 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('/api/auth/login', { email, password });
-      
+      const res = await api.post('/auth/login', { email, password });
+
       const { token, email: resEmail, role, name } = res.data;
-      
+
       localStorage.setItem('token', token);
       localStorage.setItem('email', resEmail);
       localStorage.setItem('role', role);
@@ -29,8 +29,8 @@ const AdminLogin = () => {
       localStorage.setItem('adminEmail', resEmail);
 
       // Set authorization header globally for all axios requests
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
       if (role === 'admin') {
         navigate('/admin');
       } else {
@@ -47,7 +47,7 @@ const AdminLogin = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      
+
       <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '120px 24px 60px 24px' }}>
         <div style={{ width: '100%', maxWidth: '440px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>

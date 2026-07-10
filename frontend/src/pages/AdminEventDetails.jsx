@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import CoordinatorNavbar from '../components/CoordinatorNavbar';
 import Footer from '../components/Footer';
@@ -18,7 +18,7 @@ const AdminEventDetails = () => {
 
   const fetchEventDetails = async () => {
     try {
-      const res = await axios.get(`/api/events/${eventId}`);
+      const res = await api.get(`/events/${eventId}`);
       setEvent(res.data);
     } catch (err) {
       setError('Failed to load event details.');
@@ -36,7 +36,7 @@ const AdminEventDetails = () => {
   const handleDelete = async () => {
     if (window.confirm('Are you sure you want to delete this event? This will remove all schedules, coordinators, and registrations.')) {
       try {
-        await axios.delete(`/api/events/${eventId}`);
+        await api.delete(`/events/${eventId}`);
         alert('Event deleted successfully.');
         navigate(role === 'admin' ? '/admin' : '/coordinator/dashboard');
       } catch (err) {

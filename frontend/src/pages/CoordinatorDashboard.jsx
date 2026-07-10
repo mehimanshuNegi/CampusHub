@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import CoordinatorNavbar from '../components/CoordinatorNavbar';
 import Footer from '../components/Footer';
 import { Plus, Trash2, CalendarRange, Eye, Users, Award, Edit, User, CalendarDays } from 'lucide-react';
@@ -12,7 +12,7 @@ const CoordinatorDashboard = () => {
 
   const fetchOwnedEvents = async () => {
     try {
-      const res = await axios.get('/api/events/owned');
+      const res = await api.get('/events/owned');
       setEvents(res.data);
     } catch (error) {
       console.error('Error fetching owned events:', error);
@@ -28,7 +28,7 @@ const CoordinatorDashboard = () => {
   const handleDelete = async (eventId) => {
     if (window.confirm('Are you sure you want to delete this event? This will remove all registrations and schedules.')) {
       try {
-        const res = await axios.delete(`/api/events/${eventId}`);
+        const res = await api.delete(`/events/${eventId}`);
         alert(res.data.message || 'Event Deleted successfully!');
         fetchOwnedEvents();
       } catch (error) {
@@ -55,9 +55,9 @@ const CoordinatorDashboard = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <CoordinatorNavbar />
-      
+
       <div style={{ flexGrow: 1, maxWidth: '1200px', margin: '0 auto', width: '100%', padding: '120px 24px 60px 24px' }}>
-        
+
         {/* Welcome Section */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '35px', flexWrap: 'wrap', gap: '15px' }}>
           <div>
@@ -68,7 +68,7 @@ const CoordinatorDashboard = () => {
               Manage your upcoming club events and view registrations
             </p>
           </div>
-          
+
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <Link to="/coordinator/profile" className="btn-default" style={{ background: 'var(--bg-card)', border: '1px solid var(--light-border)', color: 'var(--text-dark)', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
               <User size={16} />

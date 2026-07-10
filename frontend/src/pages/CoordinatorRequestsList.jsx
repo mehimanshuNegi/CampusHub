@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import Footer from '../components/Footer';
 import { UserCheck, Check, X, Calendar, ClipboardList } from 'lucide-react';
@@ -10,7 +10,7 @@ const CoordinatorRequestsList = () => {
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get('/api/club-coordinators/requests');
+      const res = await api.get('/club-coordinators/requests');
       setRequests(res.data);
     } catch (error) {
       console.error('Error fetching coordinator requests:', error);
@@ -26,7 +26,7 @@ const CoordinatorRequestsList = () => {
   const handleApprove = async (id) => {
     if (window.confirm('Are you sure you want to approve this request? This will activate their Club Coordinator profile.')) {
       try {
-        const res = await axios.post(`/api/club-coordinators/requests/${id}/approve`);
+        const res = await api.post(`/club-coordinators/requests/${id}/approve`);
         alert(res.data.message || 'Request Approved!');
         fetchRequests();
       } catch (error) {
@@ -38,7 +38,7 @@ const CoordinatorRequestsList = () => {
   const handleReject = async (id) => {
     if (window.confirm('Are you sure you want to reject this request?')) {
       try {
-        const res = await axios.post(`/api/club-coordinators/requests/${id}/reject`);
+        const res = await api.post(`/club-coordinators/requests/${id}/reject`);
         alert(res.data.message || 'Request Rejected successfully.');
         fetchRequests();
       } catch (error) {
@@ -50,7 +50,7 @@ const CoordinatorRequestsList = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AdminNavbar />
-      
+
       <div style={{ flexGrow: 1, maxWidth: '1200px', margin: '0 auto', width: '100%', padding: '120px 24px 60px 24px' }}>
         <div style={{ marginBottom: '35px' }}>
           <h1 style={{ fontSize: '32px', fontFamily: 'Outfit, sans-serif', fontWeight: 800, color: 'var(--text-dark)', margin: '0 0 4px 0', textAlign: 'left' }}>

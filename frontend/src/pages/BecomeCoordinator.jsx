@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { UserPlus, User, Mail, Phone, BookOpen, ShieldAlert, Award, FileText } from 'lucide-react';
@@ -33,7 +33,7 @@ const BecomeCoordinator = () => {
     }
     setLoading(true);
     try {
-      const res = await axios.post('/api/club-coordinators/request', formData);
+      const res = await api.post('/club-coordinators/request', formData);
       alert(res.data.message || 'Application submitted successfully!');
       navigate('/');
     } catch (err) {
@@ -46,7 +46,7 @@ const BecomeCoordinator = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      
+
       <div style={{ flexGrow: 1, maxWidth: '700px', margin: '0 auto', width: '100%', padding: '120px 24px 60px 24px' }}>
         <div style={{ textAlign: 'center', marginBottom: '35px' }}>
           <div style={{
@@ -71,7 +71,7 @@ const BecomeCoordinator = () => {
 
         <form onSubmit={handleSubmit} style={{ margin: '0', border: '1px solid var(--light-border)', boxShadow: 'var(--shadow-md)', borderRadius: '12px', background: 'var(--bg-card)' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            
+
             <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
               <div style={{ flex: '1 1 200px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: 'var(--text-dark)', marginBottom: '8px' }}>
@@ -195,7 +195,7 @@ const BecomeCoordinator = () => {
           </div>
         </form>
       </div>
-      
+
       <Footer />
     </div>
   );

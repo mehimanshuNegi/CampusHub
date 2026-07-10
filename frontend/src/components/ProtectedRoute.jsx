@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
   const [authStatus, setAuthStatus] = useState('checking'); // checking, verified, failed
@@ -15,9 +15,9 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     }
 
     // Set authorization header globally for all axios requests
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-    axios.post('/api/auth/verify-session', { token })
+    api.post('/auth/verify-session', { token })
       .then((res) => {
         if (res.data.authenticated) {
           const userRole = res.data.role;

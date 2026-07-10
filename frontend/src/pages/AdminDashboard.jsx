@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import Footer from '../components/Footer';
 import { Plus, Trash2, CalendarRange, Eye, Users, ShieldAlert, Award } from 'lucide-react';
@@ -11,7 +11,7 @@ const AdminDashboard = () => {
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get('/api/events');
+      const res = await api.get('/events');
       setEvents(res.data);
     } catch (error) {
       console.error('Error fetching admin events:', error);
@@ -27,7 +27,7 @@ const AdminDashboard = () => {
   const handleDelete = async (eventId) => {
     if (window.confirm('Are you sure you want to delete this event? This will remove all coordinators and registration records.')) {
       try {
-        const res = await axios.delete(`/api/events/${eventId}`);
+        const res = await api.delete(`/events/${eventId}`);
         alert(res.data.message || 'Event Deleted Successfully');
         fetchEvents();
       } catch (error) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Calendar, Clock, MapPin, Tag, User, Shield, ArrowLeft } from 'lucide-react';
@@ -15,7 +15,7 @@ const EventDetails = () => {
   useEffect(() => {
     const fetchEventDetails = async () => {
       try {
-        const res = await axios.get(`/api/events/${eventId}`);
+        const res = await api.get(`/events/${eventId}`);
         setEvent(res.data);
       } catch (err) {
         setError('Failed to load event details. Please verify the URL.');
@@ -34,7 +34,7 @@ const EventDetails = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      
+
       <div style={{ flexGrow: '1', maxWidth: '900px', margin: '0 auto', width: '100%', padding: '120px 24px 60px 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '30px' }}>
           <Link to={event ? `/events/type/${event.type_id}` : '/'} style={{

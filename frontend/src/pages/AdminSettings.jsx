@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import Footer from '../components/Footer';
 import { Shield, Mail, Key, Save } from 'lucide-react';
@@ -29,7 +29,7 @@ const AdminSettings = () => {
     }
     setLoading(true);
     try {
-      const res = await axios.put('/api/auth/settings', {
+      const res = await api.put('/auth/settings', {
         currentEmail,
         email: formData.email,
         password: formData.password
@@ -47,7 +47,7 @@ const AdminSettings = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AdminNavbar />
-      
+
       <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '120px 24px 60px 24px' }}>
         <div style={{ width: '100%', maxWidth: '480px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
@@ -115,7 +115,7 @@ const AdminSettings = () => {
           </form>
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );

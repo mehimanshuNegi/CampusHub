@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import CoordinatorNavbar from '../components/CoordinatorNavbar';
 import Footer from '../components/Footer';
@@ -32,7 +32,7 @@ const CreateEvent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('/api/events', formData);
+      const res = await api.post('/events', formData);
       alert(res.data.message || 'Event Inserted Successfully!');
       navigate(role === 'admin' ? '/admin' : '/coordinator/dashboard');
     } catch (error) {
@@ -43,7 +43,7 @@ const CreateEvent = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {role === 'admin' ? <AdminNavbar /> : <CoordinatorNavbar />}
-      
+
       <div style={{ flexGrow: 1, maxWidth: '700px', margin: '0 auto', width: '100%', padding: '120px 24px 60px 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '35px' }}>
           <Link to={role === 'admin' ? '/admin' : '/coordinator/dashboard'} style={{

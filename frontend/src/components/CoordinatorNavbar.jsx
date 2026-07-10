@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { LayoutDashboard, GraduationCap, LogOut, Menu, X, Settings, Sun, Moon, User, CreditCard } from 'lucide-react';
 
 const CoordinatorNavbar = () => {
@@ -31,7 +31,7 @@ const CoordinatorNavbar = () => {
   const handleLogout = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/auth/logout');
+      await api.post('/auth/logout');
     } catch (err) {
       console.error('Logout request failed:', err);
     } finally {

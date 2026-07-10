@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { Calendar, MapPin, ArrowLeft } from 'lucide-react';
@@ -14,7 +14,7 @@ const EventsList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get(`/api/events/type/${typeId}`);
+        const res = await api.get(`/events/type/${typeId}`);
         setEvents(res.data);
       } catch (error) {
         console.error('Error fetching events by type:', error);
@@ -45,7 +45,7 @@ const EventsList = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      
+
       <div style={{ flexGrow: '1', maxWidth: '1200px', margin: '0 auto', width: '100%', padding: '120px 24px 60px 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '40px' }}>
           <Link to="/" style={{
@@ -126,7 +126,7 @@ const EventsList = () => {
                     {categoryTitles[typeId]?.split(' ')[0] || 'Event'}
                   </span>
                 </div>
-                
+
                 <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', flexGrow: '1', justifyContent: 'space-between' }}>
                   <div>
                     <h2 style={{
@@ -137,7 +137,7 @@ const EventsList = () => {
                     }}>
                       {event.event_title}
                     </h2>
-                    
+
                     <div style={{
                       display: 'flex',
                       flexDirection: 'column',

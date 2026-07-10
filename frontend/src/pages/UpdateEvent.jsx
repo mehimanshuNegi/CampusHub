@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import CoordinatorNavbar from '../components/CoordinatorNavbar';
 import Footer from '../components/Footer';
@@ -27,7 +27,7 @@ const UpdateEvent = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(`/api/events/${eventId}`);
+        const res = await api.get(`/events/${eventId}`);
         setFormData({
           event_title: res.data.event_title || '',
           event_price: res.data.event_price || '',
@@ -63,7 +63,7 @@ const UpdateEvent = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put(`/api/events/${eventId}`, formData);
+      const res = await api.put(`/events/${eventId}`, formData);
       alert(res.data.message || 'Event Updated Successfully!');
       navigate(role === 'admin' ? `/admin/events/${eventId}` : `/coordinator/events/${eventId}`);
     } catch (err) {
@@ -74,7 +74,7 @@ const UpdateEvent = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {role === 'admin' ? <AdminNavbar /> : <CoordinatorNavbar />}
-      
+
       <div style={{ flexGrow: 1, maxWidth: '700px', margin: '0 auto', width: '100%', padding: '120px 24px 60px 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '35px' }}>
           <Link to={role === 'admin' ? `/admin/events/${eventId}` : `/coordinator/events/${eventId}`} style={{

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import CoordinatorNavbar from '../components/CoordinatorNavbar';
 import Footer from '../components/Footer';
 import { User, Phone, Award, BookOpen, Key, FileText, Save, Shield } from 'lucide-react';
@@ -21,7 +21,7 @@ const CoordinatorProfile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get('/api/club-coordinators/profile');
+        const res = await api.get('/club-coordinators/profile');
         setStaticData({
           clubName: res.data.clubName || '',
           department: res.data.department || '',
@@ -57,18 +57,18 @@ const CoordinatorProfile = () => {
         name: formData.name,
         phone: formData.phone
       };
-      
+
       // Omit password parameter if not modified
       if (formData.password) {
         payload.password = formData.password;
       }
-      
-      const res = await axios.put('/api/club-coordinators/profile', payload);
+
+      const res = await api.put('/club-coordinators/profile', payload);
       alert(res.data.message || 'Profile updated successfully!');
-      
+
       // Update local storage in case name changed
       localStorage.setItem('name', formData.name);
-      
+
       setFormData(prev => ({ ...prev, password: '' })); // Reset password field
     } catch (error) {
       alert(error.response?.data?.message || 'Error updating profile details.');
@@ -80,10 +80,10 @@ const CoordinatorProfile = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <CoordinatorNavbar />
-      
+
       <div style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '120px 24px 60px 24px' }}>
         <div style={{ width: '100%', maxWidth: '520px' }}>
-          
+
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
             <div style={{
               background: 'rgba(16, 185, 129, 0.1)',
@@ -194,7 +194,7 @@ const CoordinatorProfile = () => {
 
         </div>
       </div>
-      
+
       <Footer />
     </div>
   );

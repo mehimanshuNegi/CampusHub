@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import CoordinatorNavbar from '../components/CoordinatorNavbar';
 import Footer from '../components/Footer';
@@ -13,7 +13,7 @@ const StudentDetailsList = () => {
   useEffect(() => {
     const fetchStudentDetails = async () => {
       try {
-        const res = await axios.get('/api/participants/details');
+        const res = await api.get('/participants/details');
         setDetails(res.data);
       } catch (error) {
         console.error('Error fetching student details:', error);
@@ -28,7 +28,7 @@ const StudentDetailsList = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {role === 'admin' ? <AdminNavbar /> : <CoordinatorNavbar />}
-      
+
       <div style={{ flexGrow: 1, maxWidth: '1200px', margin: '0 auto', width: '100%', padding: '120px 24px 60px 24px' }}>
         <div style={{ marginBottom: '35px' }}>
           <h1 style={{ fontSize: '32px', fontFamily: 'Outfit, sans-serif', fontWeight: 800, color: 'var(--text-dark)', margin: '0 0 4px 0', textAlign: 'left' }}>

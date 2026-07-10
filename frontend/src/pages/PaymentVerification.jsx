@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import CoordinatorNavbar from '../components/CoordinatorNavbar';
 import Footer from '../components/Footer';
@@ -8,9 +8,9 @@ import { CreditCard, CheckCircle, XCircle, Clock, ArrowLeft, IndianRupee, Hash, 
 
 const PaymentStatusBadge = ({ status }) => {
   const styles = {
-    Pending:  { bg: 'rgba(245, 158, 11, 0.12)', color: '#d97706', border: '1px solid rgba(245, 158, 11, 0.3)', icon: Clock },
+    Pending: { bg: 'rgba(245, 158, 11, 0.12)', color: '#d97706', border: '1px solid rgba(245, 158, 11, 0.3)', icon: Clock },
     Verified: { bg: 'rgba(16, 185, 129, 0.12)', color: '#059669', border: '1px solid rgba(16, 185, 129, 0.3)', icon: CheckCircle },
-    Rejected: { bg: 'rgba(239, 68, 68, 0.12)',  color: '#dc2626', border: '1px solid rgba(239, 68, 68, 0.3)',  icon: XCircle }
+    Rejected: { bg: 'rgba(239, 68, 68, 0.12)', color: '#dc2626', border: '1px solid rgba(239, 68, 68, 0.3)', icon: XCircle }
   };
   const s = styles[status] || styles.Pending;
   const Icon = s.icon;
@@ -37,7 +37,7 @@ const PaymentVerification = () => {
   const fetchPayments = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/participants/payments');
+      const res = await api.get('/participants/payments');
       setPayments(res.data);
     } catch (err) {
       // silent
@@ -53,7 +53,7 @@ const PaymentVerification = () => {
   const handleUpdateStatus = async (registration_id, paymentStatus) => {
     setActionLoading(registration_id + paymentStatus);
     try {
-      await axios.put(`/api/participants/payments/${registration_id}/status`, { paymentStatus });
+      await api.put(`/participants/payments/${registration_id}/status`, { paymentStatus });
       // Update local state immediately for snappy UI
       setPayments(prev =>
         prev.map(p => p.registration_id === registration_id ? { ...p, paymentStatus } : p)
@@ -69,9 +69,9 @@ const PaymentVerification = () => {
     ? payments
     : payments.filter(p => p.paymentStatus === filter);
 
-  const pendingCount   = payments.filter(p => p.paymentStatus === 'Pending').length;
-  const verifiedCount  = payments.filter(p => p.paymentStatus === 'Verified').length;
-  const rejectedCount  = payments.filter(p => p.paymentStatus === 'Rejected').length;
+  const pendingCount = payments.filter(p => p.paymentStatus === 'Pending').length;
+  const verifiedCount = payments.filter(p => p.paymentStatus === 'Verified').length;
+  const rejectedCount = payments.filter(p => p.paymentStatus === 'Rejected').length;
 
   const backLink = role === 'admin' ? '/admin' : '/coordinator/dashboard';
 
@@ -103,10 +103,10 @@ const PaymentVerification = () => {
         {/* Summary Stats */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', marginBottom: '30px' }}>
           {[
-            { label: 'Pending',  count: pendingCount,  color: '#f59e0b', bg: 'rgba(245,158,11,0.1)',  status: 'Pending' },
-            { label: 'Verified', count: verifiedCount, color: '#10b981', bg: 'rgba(16,185,129,0.1)',  status: 'Verified' },
-            { label: 'Rejected', count: rejectedCount, color: '#ef4444', bg: 'rgba(239,68,68,0.1)',   status: 'Rejected' },
-            { label: 'Total',    count: payments.length, color: '#4f46e5', bg: 'rgba(79,70,229,0.1)', status: 'All' }
+            { label: 'Pending', count: pendingCount, color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', status: 'Pending' },
+            { label: 'Verified', count: verifiedCount, color: '#10b981', bg: 'rgba(16,185,129,0.1)', status: 'Verified' },
+            { label: 'Rejected', count: rejectedCount, color: '#ef4444', bg: 'rgba(239,68,68,0.1)', status: 'Rejected' },
+            { label: 'Total', count: payments.length, color: '#4f46e5', bg: 'rgba(79,70,229,0.1)', status: 'All' }
           ].map(({ label, count, color, bg, status }) => (
             <button
               key={label}

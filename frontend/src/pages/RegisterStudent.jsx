@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { ArrowLeft, User, Mail, Phone, BookOpen, GraduationCap, ShieldAlert, CreditCard, Hash } from 'lucide-react';
@@ -25,7 +25,7 @@ const RegisterStudent = () => {
   useEffect(() => {
     const fetchEvent = async () => {
       try {
-        const res = await axios.get(`/api/events/${eventId}`);
+        const res = await api.get(`/events/${eventId}`);
         setEvent(res.data);
       } catch (err) {
         // silent
@@ -68,7 +68,7 @@ const RegisterStudent = () => {
         event_id: formData.event_id,
         transactionId: isPaid ? formData.transactionId.trim() : undefined
       };
-      const res = await axios.post('/api/participants', payload);
+      const res = await api.post('/participants', payload);
       alert(res.data.message || 'Registered Successfully!');
       navigate(`/success/${res.data.registration_id}`, {
         state: {
@@ -87,7 +87,7 @@ const RegisterStudent = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Navbar />
-      
+
       <div style={{ flexGrow: 1, maxWidth: '700px', margin: '0 auto', width: '100%', padding: '120px 24px 60px 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '35px' }}>
           <Link to={`/events/${eventId}`} style={{

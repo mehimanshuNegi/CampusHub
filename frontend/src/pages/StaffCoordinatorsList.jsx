@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import Footer from '../components/Footer';
 import { ShieldAlert, Edit3 } from 'lucide-react';
@@ -12,7 +12,7 @@ const StaffCoordinatorsList = () => {
   useEffect(() => {
     const fetchCoordinators = async () => {
       try {
-        const res = await axios.get('/api/coordinators/staff');
+        const res = await api.get('/coordinators/staff');
         setCoordinators(res.data);
       } catch (error) {
         console.error('Error fetching staff coordinators:', error);
@@ -27,7 +27,7 @@ const StaffCoordinatorsList = () => {
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AdminNavbar />
-      
+
       <div style={{ flexGrow: 1, maxWidth: '1000px', margin: '0 auto', width: '100%', padding: '120px 24px 60px 24px' }}>
         <div style={{ marginBottom: '35px' }}>
           <h1 style={{ fontSize: '32px', fontFamily: 'Outfit, sans-serif', fontWeight: 800, color: 'var(--text-dark)', margin: '0 0 4px 0', textAlign: 'left' }}>
