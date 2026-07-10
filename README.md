@@ -1,96 +1,137 @@
+<div align="center">
+
 # 🎓 CampusHub
 
-> **A Modern MERN Stack College Event Management System**
+### A Modern MERN Stack College Event Management System
 
-CampusHub is a full-stack web application built using the **MERN Stack** to simplify college event management. It enables students to explore and register for events, allows club coordinators to manage their own events, and provides administrators with a centralized dashboard to manage the entire platform.
+<p>
+CampusHub is a full-stack MERN application designed to simplify college event management by providing a single platform for students, club coordinators, and administrators.
+</p>
 
-🌐 **Live Demo:** [CampusHub Live Website](https://campushub-frontend-7zby.onrender.com/?utm_source=chatgpt.com)
+<p>
 
----
+<a href="https://campushub-frontend-7zby.onrender.com/">🌐 Live Demo</a> •
+<a href="https://github.com/mehimanshuNegi/CampusHub">💻 Source Code</a>
 
-## ✨ Features
+</p>
 
-### 👨‍🎓 Public Users
+<img src="https://img.shields.io/badge/MERN-Stack-blue?style=for-the-badge" />
+<img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white" />
+<img src="https://img.shields.io/badge/Node.js-22-339933?style=for-the-badge&logo=node.js&logoColor=white" />
+<img src="https://img.shields.io/badge/Express.js-Backend-black?style=for-the-badge&logo=express" />
+<img src="https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white" />
+<img src="https://img.shields.io/badge/Render-Deployed-46E3B7?style=for-the-badge&logo=render&logoColor=black" />
 
-* 🏠 Modern responsive landing page
-* 🎉 Browse events by category
-* 📄 View complete event details
-* 📝 Register for events
-* 🆔 Auto-generated Registration ID
-* 🔍 Registered Event lookup
-* ❌ Cancel registration using Registration ID & Password
-* 💰 Paid event registration with:
-
-  * Transaction ID
-  * Payment Screenshot Upload
-* 🌙 Dark Mode support
+</div>
 
 ---
 
-### 👨‍💼 Club Coordinator
+# ✨ Features
 
-* 🔐 Secure Login
-* 📊 Coordinator Dashboard
-* ➕ Create Events
-* ✏️ Edit Events
-* 🗑️ Delete Events
-* 👥 View Registered Participants
-* 💳 Verify Student Payments
-* 👤 Update Profile
-* 📩 Apply to Become a Club Coordinator (Admin Approval Required)
+## 👨‍🎓 Public User
+
+- 🏠 Beautiful Responsive Landing Page
+- 🎉 Browse Events by Categories
+- 📄 View Detailed Event Information
+- 📝 Register for Events
+- 🆔 Automatic Registration ID Generation
+- 🔍 Registered Event Lookup
+- ❌ Cancel Registration using Registration ID & Password
+- 💳 Paid Event Registration
+  - Transaction ID
+  - Payment Screenshot Upload
+- 🌙 Dark Mode Support
 
 ---
 
-### 👨‍💻 Administrator
+## 👨‍💼 Club Coordinator
 
-* 🔐 Secure Admin Login
-* 📈 Dashboard with statistics
-* 🎉 Manage all Events
-* 👥 Manage Coordinators
-* ✅ Approve / Reject Coordinator Requests
-* 📋 View Registered Students
-* ⚙️ Update Admin Credentials
-* 📊 Monitor Registrations & Payments
+- 🔐 Secure Login
+- 📊 Coordinator Dashboard
+- ➕ Create Events
+- ✏️ Update Events
+- 🗑️ Delete Events
+- 👥 View Registered Participants
+- 💰 Verify Student Payments
+- 👤 Update Profile
+- 📩 Apply for Coordinator Role (Admin Approval Required)
+
+---
+
+## 👨‍💻 Administrator
+
+- 🔐 Secure Admin Login
+- 📈 Dashboard Analytics
+- 🎉 Manage All Events
+- 👥 Manage Coordinators
+- ✅ Approve / Reject Coordinator Requests
+- 📋 View Registered Students
+- 💳 Verify Student Payments
+- ⚙️ Update Admin Credentials
 
 ---
 
 # 🛠 Tech Stack
 
-| Category        | Technology                      |
-| --------------- | ------------------------------- |
-| Frontend        | React + Vite                    |
-| Backend         | Node.js + Express.js            |
-| Database        | MongoDB Atlas                   |
-| ODM             | Mongoose                        |
-| Authentication  | JWT + Role-Based Authentication |
-| Styling         | CSS Modules & Vanilla CSS       |
-| HTTP Client     | Axios                           |
-| Deployment      | Render                          |
-| Version Control | Git & GitHub                    |
+<div align="center">
+
+<img src="https://skillicons.dev/icons?i=javascript,html,css,react,vite,nodejs,express,mongodb,git,github,vscode" />
+
+</div>
+
+<br>
+
+| Technology | Purpose |
+|------------|---------|
+| <img src="https://skillicons.dev/icons?i=react" width="22"/> React | Frontend Development |
+| <img src="https://skillicons.dev/icons?i=vite" width="22"/> Vite | Frontend Build Tool |
+| <img src="https://skillicons.dev/icons?i=nodejs" width="22"/> Node.js | Backend Runtime |
+| <img src="https://skillicons.dev/icons?i=express" width="22"/> Express.js | REST API Development |
+| <img src="https://skillicons.dev/icons?i=mongodb" width="22"/> MongoDB Atlas | Cloud Database |
+| <img src="https://skillicons.dev/icons?i=javascript" width="22"/> JavaScript | Programming Language |
+| CSS3 | Styling |
+| Axios | HTTP Requests |
+| JWT | Authentication |
+| bcryptjs | Password Hashing |
+| Multer | File Upload |
+| Git | Version Control |
+| GitHub | Source Code Hosting |
+| Render | Cloud Deployment |
+
+---
+
+# 👥 User Roles
+
+| Role | Access |
+|------|--------|
+| 👨‍🎓 Public User | Browse Events, Register, Lookup Registration, Cancel Registration |
+| 👨‍💼 Club Coordinator | Manage Own Events, Verify Payments, View Participants |
+| 👨‍💻 Administrator | Full Platform Management |
 
 ---
 
 # 📁 Project Structure
 
 ```text
-CampusHub/
+CampusHub
 │
-├── backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── uploads/
+├── backend
+│   ├── config
+│   ├── controllers
+│   ├── middleware
+│   ├── models
+│   ├── routes
+│   ├── uploads
+│   ├── images
 │   ├── server.js
 │   └── package.json
 │
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── assets/
+├── frontend
+│   ├── public
+│   ├── src
+│   │   ├── components
+│   │   ├── pages
+│   │   ├── assets
 │   │   ├── api.js
 │   │   ├── App.jsx
 │   │   └── main.jsx
@@ -102,69 +143,7 @@ CampusHub/
 
 ---
 
-# 🚀 Getting Started
-
-## 1️⃣ Clone Repository
-
-```bash
-git clone https://github.com/mehimanshuNegi/CampusHub.git
-
-cd CampusHub
-```
-
----
-
-## 2️⃣ Backend Setup
-
-```bash
-cd backend
-
-npm install
-
-npm start
-```
-
----
-
-## 3️⃣ Frontend Setup
-
-```bash
-cd frontend
-
-npm install
-
-npm run dev
-```
-
----
-
-# 🌐 Deployment
-
-### Frontend
-
-* Render Static Site
-
-### Backend
-
-* Render Web Service
-
-### Database
-
-* MongoDB Atlas
-
----
-
-# 👥 User Roles
-
-| Role             | Permissions                                                            |
-| ---------------- | ---------------------------------------------------------------------- |
-| Public User      | Browse events, register, lookup registration, cancel registration      |
-| Club Coordinator | Manage own events, verify payments, view participants                  |
-| Administrator    | Manage platform, approve coordinators, manage events and registrations |
-
----
-
-# 💳 Event Registration Flow
+# 💳 Registration Workflow
 
 ```text
 Browse Events
@@ -176,7 +155,10 @@ View Event Details
 Register
       │
       ▼
-Payment (If Required)
+If Paid Event
+      │
+      ├── Upload Transaction ID
+      └── Upload Payment Screenshot
       │
       ▼
 Registration Successful
@@ -185,68 +167,161 @@ Registration Successful
 Registration ID Generated
       │
       ▼
-Lookup / Cancel Registration
+Lookup Registration
+      │
+      ▼
+Cancel Registration (Optional)
 ```
 
 ---
 
-# 🔒 Security Features
+# 🔐 Authentication Flow
 
-* 🔐 JWT Authentication
-* 🔑 bcrypt Password Hashing
-* 🛡️ Role-Based Access Control
-* ✅ Protected Routes
-* 🌐 Secure CORS Configuration
-* 📁 Secure File Upload Handling
+```text
+Admin
+     │
+     ▼
+Login
+     │
+     ▼
+Admin Dashboard
+
+Coordinator
+      │
+      ▼
+Apply
+      │
+      ▼
+Admin Approval
+      │
+      ▼
+Coordinator Login
+      │
+      ▼
+Coordinator Dashboard
+```
+
+---
+
+# 🚀 Local Setup
+
+## Clone Repository
+
+```bash
+git clone https://github.com/mehimanshuNegi/CampusHub.git
+
+cd CampusHub
+```
+
+---
+
+## Backend
+
+```bash
+cd backend
+
+npm install
+
+npm start
+```
+
+---
+
+## Frontend
+
+```bash
+cd frontend
+
+npm install
+
+npm run dev
+```
+
+---
+
+# 🌐 Live Project
+
+## Frontend
+
+https://campushub-frontend-7zby.onrender.com/
+
+---
+
+## Backend API
+
+https://campushub-lf3v.onrender.com/api/events
+
+---
+
+# 🔒 Security
+
+- ✅ JWT Authentication
+- ✅ bcrypt Password Hashing
+- ✅ Role Based Authorization
+- ✅ Protected Routes
+- ✅ Secure CORS Configuration
+- ✅ MongoDB Atlas Cloud Database
+- ✅ Payment Verification Workflow
 
 ---
 
 # 📱 Highlights
 
-* ✅ Fully Responsive Design
-* 🌙 Dark Mode
-* 📊 Dashboard Analytics
-* 💳 Payment Verification
-* 🎯 Clean & Modern UI
-* ⚡ Fast React + Vite Frontend
-* ☁️ Cloud Database (MongoDB Atlas)
-* 🚀 Deployed on Render
+- 📱 Fully Responsive
+- 🌙 Dark Mode
+- 🎯 Clean UI
+- 💳 Payment Verification
+- 👥 Role-Based Access
+- 📊 Dashboard Analytics
+- ☁️ MongoDB Atlas
+- 🚀 Fully Deployed on Render
 
 ---
 
 # 📸 Screenshots
 
-> Add screenshots of:
+> Add screenshots here
 
-* 🏠 Landing Page
-* 🎉 Events Page
-* 📄 Event Details
-* 📝 Registration Form
-* 👨‍💼 Coordinator Dashboard
-* 👨‍💻 Admin Dashboard
-* 🌙 Dark Mode
+- 🏠 Landing Page
+- 🎉 Events Page
+- 📄 Event Details
+- 📝 Registration Form
+- 💳 Payment Verification
+- 👨‍💻 Admin Dashboard
+- 👨‍💼 Coordinator Dashboard
+- 🌙 Dark Mode
 
 ---
 
 # 🎯 Future Improvements
 
-* 📧 Email Notifications
-* 📱 QR Code Based Event Check-in
-* 📄 Certificate Generation
-* 📈 Advanced Analytics
-* 🔔 Real-time Notifications
-* 📅 Calendar Integration
+- 📧 Email Notifications
+- 📱 QR Code Check-in
+- 🏆 Certificate Generation
+- 📅 Calendar Integration
+- 🔔 Push Notifications
+- 📈 Advanced Analytics
 
 ---
 
 # 👨‍💻 Developer
 
-**Himanshu Negi**
+## Himanshu Negi
 
-B.Tech CSE Student
+**B.Tech Computer Science Engineering**
 
-GitHub: https://github.com/mehimanshuNegi
+GitHub:
+https://github.com/mehimanshuNegi
+
+LinkedIn:
+(Add your LinkedIn Profile)
 
 ---
 
-## ⭐ If you like this project, consider giving it a Star!
+<div align="center">
+
+### ⭐ If you found this project helpful, consider giving it a Star ⭐
+
+Made with ❤️ using the MERN Stack.
+
+</div>
