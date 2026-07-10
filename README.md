@@ -1,79 +1,92 @@
-# CampusHub
+<h1 align="center">🎓 CampusHub</h1>
 
-A modern **MERN Stack College Event Management System** that simplifies event discovery, registrations, club coordination, and administration through a clean, responsive web application.
+<p align="center">
+A modern <b>MERN Stack College Event Management System</b> that simplifies event registration, club coordination, and administration through a clean and responsive web application.
+</p>
 
-CampusHub provides separate workflows for **Public Users**, **Club Coordinators**, and **Administrators**, making event management organized, secure, and easy to use.
+<p align="center">
 
----
+![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-22-339933?style=for-the-badge&logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
 
-## Features
-
-### Public Users
-
-- Browse upcoming events
-- Explore events by category
-- View complete event details
-- Register for free and paid events
-- Auto-generated Registration ID
-- Registration lookup
-- Registration cancellation
-- Track payment verification status
-- Responsive interface
-- Light & Dark Mode
-
-### Club Coordinators
-
-- Apply to become a coordinator
-- Secure login
-- Dashboard overview
-- Create events
-- Edit own events
-- Delete own events
-- View registered participants
-- Verify payment transactions
-- Update profile information
-
-### Administrator
-
-- Secure admin login
-- Dashboard with statistics
-- Manage all events
-- Manage registrations
-- Approve or reject coordinator requests
-- Manage coordinators
-- Verify payments
-- Update administrator credentials
+</p>
 
 ---
 
-# Technology Stack
+# ✨ Features
 
-## Frontend
+## 👨‍🎓 Public Users
 
-- React
-- Vite
-- React Router
-- Axios
-- Vanilla CSS
-- Responsive Design
-
-## Backend
-
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- bcryptjs
-
-## Deployment
-
-- Vercel (Frontend)
-- Render (Backend)
-- MongoDB Atlas (Database)
+- 📅 Browse upcoming events
+- 🔍 Explore events by category
+- 📖 View detailed event information
+- 📝 Register for free and paid events
+- 🆔 Auto-generated Registration ID
+- 🔎 Registration lookup
+- ❌ Cancel registration
+- 💳 Track payment verification status
+- 🌙 Light & Dark Mode
+- 📱 Fully Responsive Design
 
 ---
 
-# Project Structure
+## 🏛️ Club Coordinators
+
+- 📨 Apply to become a coordinator
+- 🔐 Secure Login
+- 📊 Coordinator Dashboard
+- ➕ Create Events
+- ✏️ Edit Own Events
+- 🗑️ Delete Own Events
+- 👥 View Registered Participants
+- ✔️ Verify Payments
+- 👤 Update Profile
+
+---
+
+## 👨‍💼 Administrator
+
+- 🔐 Secure Admin Login
+- 📈 Dashboard Analytics
+- 📅 Manage Events
+- 👥 Manage Coordinators
+- ✅ Approve / Reject Coordinator Requests
+- 📋 View Registrations
+- 💳 Verify Payments
+- ⚙️ Update Administrator Credentials
+
+---
+
+# 🛠️ Tech Stack
+
+### 🎨 Frontend
+
+- ⚛️ React
+- ⚡ Vite
+- 🛣️ React Router
+- 🌐 Axios
+- 🎨 Vanilla CSS
+
+### 🖥️ Backend
+
+- 🟢 Node.js
+- 🚀 Express.js
+- 🍃 MongoDB
+- 📦 Mongoose
+- 🔒 bcryptjs
+
+### ☁️ Deployment
+
+- ▲ Vercel
+- 🚂 Render
+- 🍃 MongoDB Atlas
+
+---
+
+# 📂 Project Structure
 
 ```text
 CampusHub
@@ -85,7 +98,6 @@ CampusHub
 │   ├── models
 │   ├── routes
 │   ├── seed.js
-│   ├── package.json
 │   └── server.js
 │
 ├── frontend
@@ -96,7 +108,6 @@ CampusHub
 │   │   ├── assets
 │   │   ├── App.jsx
 │   │   └── main.jsx
-│   ├── package.json
 │   └── vite.config.js
 │
 ├── README.md
@@ -105,19 +116,19 @@ CampusHub
 
 ---
 
-# User Roles
+# 👥 User Roles
 
-| Role | Permissions |
-|------|-------------|
-| Public User | Browse events, register, check registration, cancel registration |
-| Club Coordinator | Create and manage own events, verify payments, view participants |
-| Administrator | Manage events, coordinators, registrations, payments, and platform settings |
+| Role | Access |
+|------|--------|
+| 👨‍🎓 Public User | Browse events, Register, View Registration, Cancel Registration |
+| 🏛️ Club Coordinator | Create & Manage Own Events, Verify Payments, View Participants |
+| 👨‍💼 Administrator | Full Platform Access |
 
 ---
 
-# Installation
+# 🚀 Installation
 
-## Clone Repository
+## 📥 Clone Repository
 
 ```bash
 git clone https://github.com/mehimanshuNegi/CampusHub.git
@@ -127,7 +138,7 @@ cd CampusHub
 
 ---
 
-## Backend
+## 🖥️ Backend Setup
 
 ```bash
 cd backend
@@ -141,7 +152,7 @@ npm run dev
 
 ---
 
-## Frontend
+## 🎨 Frontend Setup
 
 ```bash
 cd frontend
@@ -153,7 +164,7 @@ npm run dev
 
 ---
 
-# Environment Variables
+# 🔑 Environment Variables
 
 Create a `.env` file inside the **backend** folder.
 
@@ -167,11 +178,11 @@ JWT_SECRET=YOUR_SECRET_KEY
 
 ---
 
-# Default Credentials
+# 🔐 Default Credentials
 
-## Administrator
+## 👨‍💼 Administrator
 
-```
+```text
 Email:
 admin@campushub.com
 
@@ -181,9 +192,9 @@ admin123
 
 ---
 
-## Club Coordinator
+## 🏛️ Club Coordinator
 
-```
+```text
 Email:
 coordinator@campushub.com
 
@@ -193,53 +204,54 @@ coordinator123
 
 ---
 
-# Core Modules
+# 📌 Core Modules
 
-- Event Management
-- Event Categories
-- Event Registration
-- Registration Verification
-- Registration Cancellation
-- Coordinator Application System
-- Coordinator Dashboard
-- Administrator Dashboard
-- Payment Verification
-- Authentication & Authorization
-- Role-Based Access Control
-- Dark Mode
-
----
-
-# Security
-
-- bcrypt password hashing
-- Protected Routes
-- Role-Based Authorization
-- Secure Authentication
-- Input Validation
-- Environment Variable Configuration
+- 📅 Event Management
+- 🎯 Event Categories
+- 📝 Event Registration
+- 🆔 Registration Lookup
+- ❌ Registration Cancellation
+- 👨‍💼 Coordinator Portal
+- 📊 Coordinator Dashboard
+- ⚙️ Admin Dashboard
+- 💳 Payment Verification
+- 🔒 Authentication & Authorization
+- 👥 Role-Based Access Control
+- 🌙 Dark Mode
 
 ---
 
-# Future Scope
+# 🔒 Security
 
-- QR Code based event check-in
-- Email notifications
-- Attendance management
-- Event analytics
-- Cloud image storage
-- Certificate generation
+- 🔐 bcrypt Password Hashing
+- 🛡️ Protected Routes
+- 👥 Role-Based Authorization
+- 🔑 Secure Authentication
+- ✔️ Input Validation
+- 🌱 Environment Variables
 
 ---
 
-# Developer
+# 🚀 Future Improvements
+
+- 📧 Email Notifications
+- 🎟️ QR Code Check-in
+- 📊 Event Analytics
+- ☁️ Cloud Image Storage
+- 📜 Certificate Generation
+
+---
+
+# 👨‍💻 Developer
 
 **Himanshu Negi**
 
 B.Tech Computer Science Engineering
 
+⭐ If you like this project, consider giving it a star!
+
 ---
 
-# License
+# 📄 License
 
-This project is intended for educational purposes and portfolio demonstration.
+This project is developed for educational purposes and portfolio demonstration.
