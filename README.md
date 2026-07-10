@@ -1,110 +1,245 @@
 # CampusHub
 
-CampusHub is a responsive college event activities portal designed to centralize event registrations, scheduling configurations, logistics details, and coordinator outreach in a single clean workspace.
+A modern **MERN Stack College Event Management System** that simplifies event discovery, registrations, club coordination, and administration through a clean, responsive web application.
+
+CampusHub provides separate workflows for **Public Users**, **Club Coordinators**, and **Administrators**, making event management organized, secure, and easy to use.
 
 ---
 
-## 🛠️ Technology Stack
-- **Frontend**: React (Vite, Single Page Application), Vanilla CSS variables (supporting native Dark Mode), Lucide Icons, Axios client
-- **Backend**: Node.js + Express.js API Gateway
-- **Database**: MongoDB (via Mongoose ODM)
+## Features
+
+### Public Users
+
+- Browse upcoming events
+- Explore events by category
+- View complete event details
+- Register for free and paid events
+- Auto-generated Registration ID
+- Registration lookup
+- Registration cancellation
+- Track payment verification status
+- Responsive interface
+- Light & Dark Mode
+
+### Club Coordinators
+
+- Apply to become a coordinator
+- Secure login
+- Dashboard overview
+- Create events
+- Edit own events
+- Delete own events
+- View registered participants
+- Verify payment transactions
+- Update profile information
+
+### Administrator
+
+- Secure admin login
+- Dashboard with statistics
+- Manage all events
+- Manage registrations
+- Approve or reject coordinator requests
+- Manage coordinators
+- Verify payments
+- Update administrator credentials
 
 ---
 
-## 📂 Repository Structure
+# Technology Stack
+
+## Frontend
+
+- React
+- Vite
+- React Router
+- Axios
+- Vanilla CSS
+- Responsive Design
+
+## Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+- bcryptjs
+
+## Deployment
+
+- Vercel (Frontend)
+- Render (Backend)
+- MongoDB Atlas (Database)
+
+---
+
+# Project Structure
+
+```text
+CampusHub
+│
+├── backend
+│   ├── config
+│   ├── controllers
+│   ├── middleware
+│   ├── models
+│   ├── routes
+│   ├── seed.js
+│   ├── package.json
+│   └── server.js
+│
+├── frontend
+│   ├── public
+│   ├── src
+│   │   ├── components
+│   │   ├── pages
+│   │   ├── assets
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── package.json
+│   └── vite.config.js
+│
+├── README.md
+└── .gitignore
 ```
-CampusHub/
-├── backend/
-│   ├── config/          # MongoDB connection configuration
-│   ├── controllers/     # Controller modules for event and registration logic
-│   ├── models/          # Mongoose schema definitions (Admin, Event, Participant)
-│   ├── routes/          # Express API route mapping
-│   ├── seed.js          # Database seeding script (drops DB & rebuilds clean)
-│   └── server.js        # Backend Express server gateway
-└── frontend/
-    ├── public/          # Static assets (images, CSS styles, fonts)
-    └── src/
-        ├── components/  # Reusable UI components (Navbar, Footer, AdminNavbar)
-        ├── pages/       # Page views (LandingPage, EventsList, EventDetails, etc.)
-        ├── App.jsx      # Navigation, clean routing table, and compatibility redirects
-        └── main.jsx     # Frontend entry point
+
+---
+
+# User Roles
+
+| Role | Permissions |
+|------|-------------|
+| Public User | Browse events, register, check registration, cancel registration |
+| Club Coordinator | Create and manage own events, verify payments, view participants |
+| Administrator | Manage events, coordinators, registrations, payments, and platform settings |
+
+---
+
+# Installation
+
+## Clone Repository
+
+```bash
+git clone https://github.com/mehimanshuNegi/CampusHub.git
+
+cd CampusHub
 ```
 
 ---
 
-## 🚀 Installation & Run Instructions
+## Backend
 
-### 1. Prerequisites
-Ensure you have the following installed on your system:
-- **Node.js** (v16 or higher)
-- **MongoDB** running locally on port `27017`
+```bash
+cd backend
 
-### 2. Database Setup & Seeding
-1. Open a terminal and navigate to the `backend/` directory.
-2. Run the database seed script to clear the old database and seed active events, administrators, and participant registrations:
-   ```bash
-   node seed.js
-   ```
+npm install
 
-### 3. Run the Backend API Server
-1. Inside the `backend/` directory, ensure dependencies are installed:
-   ```bash
-   npm install
-   ```
-2. Start the Express API server (running on port `5001`):
-   ```bash
-   npm start
-   ```
+node seed.js
 
-### 4. Run the Frontend Development Server
-1. Open a new terminal and navigate to the `frontend/` directory.
-2. Ensure dependencies are installed:
-   ```bash
-   npm install
-   ```
-3. Start the React development server:
-   ```bash
-   npm run dev
-   ```
-4. Open [http://localhost:3000/](http://localhost:3000/) in your browser.
+npm run dev
+```
 
 ---
 
-## 💼 Portal Credentials
+## Frontend
 
-### Admin Portal
-- **Email**: `admin@campushub.com`
-- **Password**: `admin123` (can be updated via the Account Settings page)
+```bash
+cd frontend
 
-### Club Coordinator Portal (Sample)
-- **Email**: `coordinator@campushub.com`
-- **Password**: `coordinator123`
+npm install
 
-> All passwords are hashed with **bcryptjs** (10 salt rounds). Never stored in plaintext.
-
-### Sample Student Registrations
-- **Registration IDs**: `CH-0001`, `CH-0002`
-- **Cancellation Password**: `1234` (for seeded mock registrations)
+npm run dev
+```
 
 ---
 
-## 👥 User Roles
+# Environment Variables
 
-| Role | Access |
-|------|--------|
-| **Public** | Browse events, register, view/cancel registrations |
-| **Club Coordinator** | Login, manage own events, view participants, update profile |
-| **Admin** | Full access: all events, coordinator requests, approve/reject, account settings |
+Create a `.env` file inside the **backend** folder.
 
----
+```env
+PORT=5001
 
-## 🔒 Security Features
-- bcryptjs password hashing (Admin & Coordinator accounts)
-- Token-based session authentication (in-memory activeSessions store)
-- Role-based route protection (ProtectedRoute component + backend middleware)
-- Coordinators cannot access admin pages or modify other coordinators' events
+MONGO_URI=YOUR_MONGODB_CONNECTION_STRING
+
+JWT_SECRET=YOUR_SECRET_KEY
+```
 
 ---
 
-## 👨‍💻 Developer
-**Himanshu Negi** 
+# Default Credentials
+
+## Administrator
+
+```
+Email:
+admin@campushub.com
+
+Password:
+admin123
+```
+
+---
+
+## Club Coordinator
+
+```
+Email:
+coordinator@campushub.com
+
+Password:
+coordinator123
+```
+
+---
+
+# Core Modules
+
+- Event Management
+- Event Categories
+- Event Registration
+- Registration Verification
+- Registration Cancellation
+- Coordinator Application System
+- Coordinator Dashboard
+- Administrator Dashboard
+- Payment Verification
+- Authentication & Authorization
+- Role-Based Access Control
+- Dark Mode
+
+---
+
+# Security
+
+- bcrypt password hashing
+- Protected Routes
+- Role-Based Authorization
+- Secure Authentication
+- Input Validation
+- Environment Variable Configuration
+
+---
+
+# Future Scope
+
+- QR Code based event check-in
+- Email notifications
+- Attendance management
+- Event analytics
+- Cloud image storage
+- Certificate generation
+
+---
+
+# Developer
+
+**Himanshu Negi**
+
+B.Tech Computer Science Engineering
+
+---
+
+# License
+
+This project is intended for educational purposes and portfolio demonstration.
