@@ -107,4 +107,4 @@ Ensure you have the following installed on your system:
 ---
 
 ## 👨‍💻 Developer
-**Himanshu Negi** — MERN Stack Summer Training Project
+**Himanshu Negi** 
