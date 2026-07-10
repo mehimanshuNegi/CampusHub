@@ -13,7 +13,7 @@ CampusHub is a responsive college event activities portal designed to centralize
 
 ## 📂 Repository Structure
 ```
-EventManagementSystems/
+CampusHub/
 ├── backend/
 │   ├── config/          # MongoDB connection configuration
 │   ├── controllers/     # Controller modules for event and registration logic
