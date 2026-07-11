@@ -69,7 +69,7 @@ function App() {
 
         {/* Protected Admin Portal routes */}
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
-        <Route path="/admin/requests" element={<ProtectedRoute allowedRoles={['admin']}><CoordinatorRequestsList /></ProtectedRoute>} />
+        <Route path="/admin/requests" element={<Navigate to="/admin/coordinators" replace />} />
         <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><AdminUserManagement /></ProtectedRoute>} />
         <Route path="/admin/coordinators" element={<ProtectedRoute allowedRoles={['admin']}><AdminCoordinatorManagement /></ProtectedRoute>} />
         <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={['admin']}><AdminSettings /></ProtectedRoute>} />

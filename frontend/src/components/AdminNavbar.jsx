@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import api from '../api';
-import { LayoutDashboard, Users, GraduationCap, ShieldAlert, LogOut, Menu, X, Settings, Sun, Moon, UserCheck, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Users, GraduationCap, ShieldAlert, LogOut, Menu, X, Settings, Sun, Moon, UserCheck, CreditCard, ClipboardList } from 'lucide-react';
 
 const AdminNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -12,6 +12,7 @@ export const getUsers = async (req, res) => {
     const admins = await Admin.find({});
     const coordinators = await ClubCoordinator.find({});
     const participants = await Participant.find({});
+    const events = await Event.find({});
 
     // De-duplicate students/participants by email
     const studentMap = {};
@@ -33,18 +34,22 @@ export const getUsers = async (req, res) => {
       status: a.status || 'Active'
     }));
 
-    const mappedCoordinators = coordinators.map((c) => ({
-      id: c._id.toString(),
-      name: c.name,
-      email: c.email,
-      phone: c.phone,
-      department: c.department,
-      semester: '',
-      role: 'coordinator',
-      status: c.status || 'Active',
-      clubName: c.clubName,
-      description: c.description
-    }));
+    const mappedCoordinators = coordinators.map((c) => {
+      const eventsManaged = events.filter(e => e.createdBy === c.email).length;
+      return {
+        id: c._id.toString(),
+        name: c.name,
+        email: c.email,
+        phone: c.phone,
+        department: c.department,
+        semester: '',
+        role: 'coordinator',
+        status: c.status || 'Active',
+        clubName: c.clubName,
+        description: c.description,
+        eventsManaged
+      };
+    });
 
     const mappedStudents = Object.values(studentMap).map((s) => ({
       id: s._id.toString(),

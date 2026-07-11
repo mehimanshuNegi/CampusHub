@@ -76,8 +76,18 @@ export const approveCoordinatorRequest = async (req, res) => {
         department: request.department,
         description: request.description,
         password: request.password,
-        role: request.role
+        role: request.role,
+        status: 'Active'
       });
+    } else {
+      coordinator.name = request.name;
+      coordinator.phone = request.phone;
+      coordinator.clubName = request.clubName;
+      coordinator.department = request.department;
+      coordinator.description = request.description;
+      coordinator.role = request.role;
+      coordinator.status = 'Active';
+      await coordinator.save();
     }
 
     // Mark request as Approved

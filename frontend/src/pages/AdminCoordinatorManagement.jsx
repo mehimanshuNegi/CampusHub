@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import Footer from '../components/Footer';
-import { UserCheck, ShieldAlert, Users, Award, Trash2, Key, RefreshCw, BarChart2, BookOpen, AlertCircle, X, ChevronRight } from 'lucide-react';
+import { UserCheck, ShieldAlert, Users, Award, Trash2, Key, RefreshCw, BarChart2, BookOpen, AlertCircle, X, Check, ClipboardList, Search } from 'lucide-react';
 
 const AdminCoordinatorManagement = () => {
   const [users, setUsers] = useState([]);
   const [coordinators, setCoordinators] = useState([]);
   const [students, setStudents] = useState([]);
+  const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('active'); // 'active' or 'pending'
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Promotion Form State
   const [promoteForm, setPromoteForm] = useState({
@@ -47,9 +50,13 @@ const AdminCoordinatorManagement = () => {
       const studs = res.data.filter(u => u.role === 'student');
       setCoordinators(coords);
       setStudents(studs);
+
+      // Fetch pending coordinator requests
+      const reqsRes = await api.get('/club-coordinators/requests');
+      setRequests(reqsRes.data);
     } catch (err) {
-      console.error('Error fetching users:', err);
-      alert('Failed to load coordinators and students lists.');
+      console.error('Error fetching users/requests:', err);
+      alert('Failed to load coordinators and requests.');
     } finally {
       setLoading(false);
     }
@@ -136,7 +143,6 @@ const AdminCoordinatorManagement = () => {
 
   const handleTransferClick = async (coord) => {
     setTransferCoord(coord);
-    // Fetch all events to find events owned by this coordinator
     try {
       const res = await api.get('/events');
       const owned = res.data.filter(e => e.createdBy === coord.email);
@@ -167,6 +173,39 @@ const AdminCoordinatorManagement = () => {
     }
   };
 
+  const handleApproveRequest = async (id) => {
+    if (window.confirm('Are you sure you want to approve this request? This will activate their Coordinator profile.')) {
+      try {
+        const res = await api.post(`/club-coordinators/requests/${id}/approve`);
+        alert(res.data.message || 'Request Approved!');
+        fetchData();
+      } catch (error) {
+        alert(error.response?.data?.message || 'Error approving request.');
+      }
+    }
+  };
+
+  const handleRejectRequest = async (id) => {
+    if (window.confirm('Are you sure you want to reject this request?')) {
+      try {
+        const res = await api.post(`/club-coordinators/requests/${id}/reject`);
+        alert(res.data.message || 'Request Rejected successfully.');
+        fetchData();
+      } catch (error) {
+        alert(error.response?.data?.message || 'Error rejecting request.');
+      }
+    }
+  };
+
+  // Filter active coordinators
+  const filteredCoordinators = coordinators.filter(c =>
+    c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    c.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (c.clubName && c.clubName.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  const pendingRequests = requests.filter(r => r.status === 'Pending');
+
   return (
     <div style={{ background: 'var(--bg-base)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <AdminNavbar />
@@ -177,199 +216,330 @@ const AdminCoordinatorManagement = () => {
             Coordinator Management
           </h1>
           <p style={{ margin: '0', color: 'var(--text-muted)', fontSize: '15px' }}>
-            Promote/demote coordinators, re-assign event ownerships, manage assigned clubs, reset passwords, and monitor metrics
+            Promote students, approve pending requests, reassign event owners, reset passwords, and view activity metrics.
           </p>
         </div>
 
-        {/* Promotion Form Section */}
-        <div style={{
-          background: 'var(--bg-card)',
-          borderRadius: '12px',
-          border: '1px solid var(--light-border)',
-          boxShadow: 'var(--shadow-sm)',
-          padding: '24px',
-          marginBottom: '35px'
-        }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', margin: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Award size={20} color="#4f46e5" />
-            Promote Student to Coordinator
-          </h2>
-          <form onSubmit={handlePromote} style={{ margin: 0 }}>
-            <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-              {/* Select Student */}
-              <div style={{ flex: '1 1 200px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Select Student</label>
-                <select
-                  required
-                  value={promoteForm.studentEmail}
-                  onChange={(e) => {
-                    const selected = students.find(s => s.email === e.target.value);
-                    setPromoteForm({
-                      ...promoteForm,
-                      studentEmail: e.target.value,
-                      department: selected ? selected.department : ''
-                    });
-                  }}
-                  className="form-control"
-                  style={{ width: '100%', background: 'var(--bg-base)', color: 'var(--text-dark)' }}
-                >
-                  <option value="">Choose student...</option>
-                  {students.map(s => (
-                    <option key={s.id} value={s.email}>{s.name} ({s.email})</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Club Name */}
-              <div style={{ flex: '1 1 200px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Assign Club Name</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Coding Club"
-                  value={promoteForm.clubName}
-                  onChange={(e) => setPromoteForm({ ...promoteForm, clubName: e.target.value })}
-                  className="form-control"
-                />
-              </div>
-
-              {/* Department */}
-              <div style={{ flex: '1 1 120px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Department</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. CSE"
-                  value={promoteForm.department}
-                  onChange={(e) => setPromoteForm({ ...promoteForm, department: e.target.value })}
-                  className="form-control"
-                />
-              </div>
-
-              {/* Staff vs Student Selector */}
-              <div style={{ flex: '1 1 140px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Coordinator Type</label>
-                <select
-                  value={promoteForm.isStaff ? 'staff' : 'student'}
-                  onChange={(e) => setPromoteForm({ ...promoteForm, isStaff: e.target.value === 'staff' })}
-                  className="form-control"
-                  style={{ width: '100%', background: 'var(--bg-base)', color: 'var(--text-dark)' }}
-                >
-                  <option value="student">Student Coord</option>
-                  <option value="staff">Staff/Faculty Coord</option>
-                </select>
-              </div>
-            </div>
-
-            <div style={{ marginTop: '15px' }}>
-              <label style={{ fontWeight: '600', color: 'var(--text-dark)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Short Profile Description</label>
-              <input
-                type="text"
-                placeholder="e.g. Code club lead helping organize technical events..."
-                value={promoteForm.description}
-                onChange={(e) => setPromoteForm({ ...promoteForm, description: e.target.value })}
-                className="form-control"
-              />
-            </div>
-
-            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-start' }}>
-              <button type="submit" className="btn-default" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <UserCheck size={18} />
-                Promote to Coordinator
-              </button>
-            </div>
-          </form>
+        {/* Tabs Control */}
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '25px', borderBottom: '1px solid var(--light-border)', paddingBottom: '10px' }}>
+          <button
+            onClick={() => setActiveTab('active')}
+            style={{
+              background: activeTab === 'active' ? '#4f46e5' : 'transparent',
+              color: activeTab === 'active' ? '#ffffff' : 'var(--text-muted)',
+              border: activeTab === 'active' ? '1px solid #4f46e5' : '1px solid var(--light-border)',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            Active Coordinators ({coordinators.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('pending')}
+            style={{
+              background: activeTab === 'pending' ? '#4f46e5' : 'transparent',
+              color: activeTab === 'pending' ? '#ffffff' : 'var(--text-muted)',
+              border: activeTab === 'pending' ? '1px solid #4f46e5' : '1px solid var(--light-border)',
+              padding: '10px 20px',
+              borderRadius: '8px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            Pending Requests ({pendingRequests.length})
+          </button>
         </div>
 
-        {/* Coordinators Listing Card */}
-        <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--light-border)', boxShadow: 'var(--shadow-md)', padding: '24px' }}>
-          <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Users size={20} color="#4f46e5" />
-            Active Club Coordinators ({coordinators.length})
-          </h2>
+        {/* TAB 1: ACTIVE COORDINATORS */}
+        {activeTab === 'active' && (
+          <>
+            {/* Promotion Section inside active tab */}
+            <div style={{
+              background: 'var(--bg-card)',
+              borderRadius: '12px',
+              border: '1px solid var(--light-border)',
+              boxShadow: 'var(--shadow-sm)',
+              padding: '24px',
+              marginBottom: '35px'
+            }}>
+              <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', margin: '0 0 15px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Award size={20} color="#4f46e5" />
+                Promote Student to Coordinator
+              </h2>
+              <form onSubmit={handlePromote} style={{ margin: 0 }}>
+                <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                  <div style={{ flex: '1 1 200px' }}>
+                    <label style={{ fontWeight: '600', color: 'var(--text-dark)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Select Student</label>
+                    <select
+                      required
+                      value={promoteForm.studentEmail}
+                      onChange={(e) => {
+                        const selected = students.find(s => s.email === e.target.value);
+                        setPromoteForm({
+                          ...promoteForm,
+                          studentEmail: e.target.value,
+                          department: selected ? selected.department : ''
+                        });
+                      }}
+                      className="form-control"
+                      style={{ width: '100%', background: 'var(--bg-base)', color: 'var(--text-dark)' }}
+                    >
+                      <option value="">Choose student...</option>
+                      {students.map(s => (
+                        <option key={s.id} value={s.email}>{s.name} ({s.email})</option>
+                      ))}
+                    </select>
+                  </div>
 
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <h3 style={{ color: 'var(--text-muted)' }}>Loading coordinators...</h3>
+                  <div style={{ flex: '1 1 200px' }}>
+                    <label style={{ fontWeight: '600', color: 'var(--text-dark)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Assign Club Name</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Coding Club"
+                      value={promoteForm.clubName}
+                      onChange={(e) => setPromoteForm({ ...promoteForm, clubName: e.target.value })}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div style={{ flex: '1 1 120px' }}>
+                    <label style={{ fontWeight: '600', color: 'var(--text-dark)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Department</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. CSE"
+                      value={promoteForm.department}
+                      onChange={(e) => setPromoteForm({ ...promoteForm, department: e.target.value })}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div style={{ flex: '1 1 140px' }}>
+                    <label style={{ fontWeight: '600', color: 'var(--text-dark)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Coordinator Type</label>
+                    <select
+                      value={promoteForm.isStaff ? 'staff' : 'student'}
+                      onChange={(e) => setPromoteForm({ ...promoteForm, isStaff: e.target.value === 'staff' })}
+                      className="form-control"
+                      style={{ width: '100%', background: 'var(--bg-base)', color: 'var(--text-dark)' }}
+                    >
+                      <option value="student">Student Coord</option>
+                      <option value="staff">Staff/Faculty Coord</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style={{ marginTop: '15px' }}>
+                  <label style={{ fontWeight: '600', color: 'var(--text-dark)', fontSize: '14px', display: 'block', marginBottom: '6px' }}>Short Profile Description</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Code club lead helping organize technical events..."
+                    value={promoteForm.description}
+                    onChange={(e) => setPromoteForm({ ...promoteForm, description: e.target.value })}
+                    className="form-control"
+                  />
+                </div>
+
+                <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-start' }}>
+                  <button type="submit" className="btn-default" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <UserCheck size={18} />
+                    Promote to Coordinator
+                  </button>
+                </div>
+              </form>
             </div>
-          ) : coordinators.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <h3 style={{ color: 'var(--text-muted)' }}>No coordinators registered</h3>
+
+            {/* Active Coordinators Search and List Table */}
+            <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--light-border)', boxShadow: 'var(--shadow-md)', padding: '24px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '15px', flexWrap: 'wrap', marginBottom: '20px' }}>
+                <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Users size={20} color="#4f46e5" />
+                  Active Club Coordinators
+                </h2>
+
+                <div style={{ position: 'relative', width: '280px' }}>
+                  <Search size={16} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                  <input
+                    type="text"
+                    placeholder="Search by name, email, or club..."
+                    className="form-control"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{ paddingLeft: '32px', width: '100%', fontSize: '13px' }}
+                  />
+                </div>
+              </div>
+
+              {loading ? (
+                <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <h3 style={{ color: 'var(--text-muted)' }}>Loading coordinators...</h3>
+                </div>
+              ) : filteredCoordinators.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                  <h3 style={{ color: 'var(--text-muted)' }}>No coordinators found</h3>
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid var(--light-border)', color: 'var(--text-muted)', fontSize: '13px', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                        <th style={{ padding: '12px 16px' }}>Name</th>
+                        <th style={{ padding: '12px 16px' }}>Email</th>
+                        <th style={{ padding: '12px 16px' }}>Assigned Club</th>
+                        <th style={{ padding: '12px 16px' }}>Events Managed</th>
+                        <th style={{ padding: '12px 16px' }}>Status</th>
+                        <th style={{ padding: '12px 16px', textAlign: 'right' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredCoordinators.map((coord) => (
+                        <tr key={coord.id} style={{ borderBottom: '1px solid var(--light-border)', fontSize: '14px', color: 'var(--text-dark)' }}>
+                          <td style={{ padding: '16px', fontWeight: '700' }}>{coord.name}</td>
+                          <td style={{ padding: '16px' }}>{coord.email}</td>
+                          <td style={{ padding: '16px' }}>
+                            <div style={{ fontWeight: '600' }}>{coord.clubName}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{coord.department}</div>
+                          </td>
+                          <td style={{ padding: '16px', fontWeight: '600', color: '#4f46e5' }}>{coord.eventsManaged || 0}</td>
+                          <td style={{ padding: '16px' }}>
+                            <span style={{ fontWeight: '700', color: coord.status === 'Active' ? '#10b981' : '#ef4444' }}>
+                              {coord.status}
+                            </span>
+                          </td>
+                          <td style={{ padding: '16px', textAlign: 'right' }}>
+                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                              <button
+                                onClick={() => handleViewMetrics(coord)}
+                                className="btn-default"
+                                style={{ padding: '5px 10px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(79, 70, 229, 0.08)', border: '1px solid rgba(79, 70, 229, 0.2)', color: '#4f46e5' }}
+                              >
+                                <BarChart2 size={13} /> Activity
+                              </button>
+                              <button
+                                onClick={() => { setChangeClubCoord(coord); setNewClubName(coord.clubName); }}
+                                className="btn-default"
+                                style={{ padding: '5px 10px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.2)', color: '#2563eb' }}
+                              >
+                                <BookOpen size={13} /> Club
+                              </button>
+                              <button
+                                onClick={() => handleTransferClick(coord)}
+                                className="btn-default"
+                                style={{ padding: '5px 10px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', color: '#059669' }}
+                              >
+                                <RefreshCw size={13} /> Transfer
+                              </button>
+                              <button
+                                onClick={() => setPasswordResetCoord(coord)}
+                                className="btn-default"
+                                style={{ padding: '5px 10px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)', color: '#d97706' }}
+                              >
+                                <Key size={13} /> Password
+                              </button>
+                              <button
+                                onClick={() => handleDemote(coord)}
+                                className="btn-default"
+                                style={{ padding: '5px 10px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#ef4444' }}
+                              >
+                                <Trash2 size={13} /> Demote
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
-          ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid var(--light-border)', color: 'var(--text-muted)', fontSize: '13px', textTransform: 'uppercase', fontWeight: 'bold' }}>
-                    <th style={{ padding: '12px 16px' }}>Coordinator Name</th>
-                    <th style={{ padding: '12px 16px' }}>Assigned Club / Dept</th>
-                    <th style={{ padding: '12px 16px' }}>Phone</th>
-                    <th style={{ padding: '12px 16px', textAlign: 'right' }}>Management Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {coordinators.map((coord) => (
-                    <tr key={coord.id} style={{ borderBottom: '1px solid var(--light-border)', fontSize: '14px', color: 'var(--text-dark)' }}>
-                      <td style={{ padding: '16px' }}>
-                        <div style={{ fontWeight: '700' }}>{coord.name}</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{coord.email}</div>
-                      </td>
-                      <td style={{ padding: '16px' }}>
-                        <div style={{ fontWeight: '600' }}>{coord.clubName}</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{coord.department}</div>
-                      </td>
-                      <td style={{ padding: '16px' }}>{coord.phone}</td>
-                      <td style={{ padding: '16px', textAlign: 'right' }}>
-                        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-                          <button
-                            onClick={() => handleViewMetrics(coord)}
-                            className="btn-default"
-                            style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(79, 70, 229, 0.08)', border: '1px solid rgba(79, 70, 229, 0.2)', color: '#4f46e5' }}
-                          >
-                            <BarChart2 size={13} />
-                            Activity
-                          </button>
-                          <button
-                            onClick={() => { setChangeClubCoord(coord); setNewClubName(coord.clubName); }}
-                            className="btn-default"
-                            style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.2)', color: '#2563eb' }}
-                          >
-                            <BookOpen size={13} />
-                            Change Club
-                          </button>
-                          <button
-                            onClick={() => handleTransferClick(coord)}
-                            className="btn-default"
-                            style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', color: '#059669' }}
-                          >
-                            <RefreshCw size={13} />
-                            Transfer Events
-                          </button>
-                          <button
-                            onClick={() => setPasswordResetCoord(coord)}
-                            className="btn-default"
-                            style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)', color: '#d97706' }}
-                          >
-                            <Key size={13} />
-                            Reset Password
-                          </button>
-                          <button
-                            onClick={() => handleDemote(coord)}
-                            className="btn-default"
-                            style={{ padding: '6px 12px', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.2)', color: '#ef4444' }}
-                          >
-                            <Trash2 size={13} />
-                            Demote
-                          </button>
-                        </div>
-                      </td>
+          </>
+        )}
+
+        {/* TAB 2: PENDING REQUESTS */}
+        {activeTab === 'pending' && (
+          <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--light-border)', boxShadow: 'var(--shadow-md)', padding: '24px' }}>
+            <h2 style={{ fontSize: '18px', fontWeight: '700', color: 'var(--text-dark)', margin: '0 0 20px 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <ClipboardList size={20} color="#4f46e5" />
+              Pending Coordinator Applications
+            </h2>
+
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '40px 0' }}>
+                <h3 style={{ color: 'var(--text-muted)' }}>Loading requests...</h3>
+              </div>
+            ) : pendingRequests.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-muted)' }}>
+                <h3>No pending coordinator requests</h3>
+                <p>New request submissions will appear here automatically.</p>
+              </div>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '2px solid var(--light-border)', color: 'var(--text-muted)', fontSize: '13px', textTransform: 'uppercase', fontWeight: 'bold' }}>
+                      <th style={{ padding: '12px 16px' }}>Name</th>
+                      <th style={{ padding: '12px 16px' }}>Email</th>
+                      <th style={{ padding: '12px 16px' }}>Department</th>
+                      <th style={{ padding: '12px 16px' }}>Club</th>
+                      <th style={{ padding: '12px 16px' }}>Applied Date</th>
+                      <th style={{ padding: '12px 16px' }}>Status</th>
+                      <th style={{ padding: '12px 16px', textAlign: 'center' }}>Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
+                  </thead>
+                  <tbody>
+                    {pendingRequests.map((row) => (
+                      <tr key={row._id} style={{ borderBottom: '1px solid var(--light-border)', fontSize: '14px', color: 'var(--text-dark)' }}>
+                        <td style={{ padding: '16px', fontWeight: '700' }}>{row.name}</td>
+                        <td style={{ padding: '16px' }}>{row.email}</td>
+                        <td style={{ padding: '16px' }}>{row.department}</td>
+                        <td style={{ padding: '16px', fontWeight: '600', color: '#4f46e5' }}>{row.clubName}</td>
+                        <td style={{ padding: '16px' }}>{new Date(row.createdAt).toLocaleDateString()}</td>
+                        <td style={{ padding: '16px' }}>
+                          <span style={{
+                            display: 'inline-block',
+                            padding: '3px 10px',
+                            borderRadius: '4px',
+                            fontSize: '11px',
+                            fontWeight: '700',
+                            textTransform: 'uppercase',
+                            background: 'rgba(245, 158, 11, 0.15)',
+                            color: '#d97706'
+                          }}>
+                            {row.status}
+                          </span>
+                        </td>
+                        <td style={{ padding: '16px', textAlign: 'center' }}>
+                          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                            <button
+                              type="button"
+                              onClick={() => handleApproveRequest(row._id || row.id)}
+                              className="btn-default"
+                              style={{ padding: '6px 12px', fontSize: '12px', background: '#10b981', color: '#ffffff', border: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <Check size={14} /> Approve
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRejectRequest(row._id || row.id)}
+                              className="btn-default"
+                              style={{ padding: '6px 12px', fontSize: '12px', background: '#ef4444', color: '#ffffff', border: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                            >
+                              <X size={14} /> Reject
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Metrics Activity Modal */}
