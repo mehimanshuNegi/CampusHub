@@ -5,9 +5,9 @@ import { hashPassword } from '../middleware/auth.js';
 // Student / Faculty submits a request to become a Club Coordinator
 export const submitCoordinatorRequest = async (req, res) => {
   try {
-    const { name, email, phone, clubName, department, description, password } = req.body;
+    const { name, email, phone, clubName, department, description, password, role } = req.body;
 
-    if (!name || !email || !phone || !clubName || !department || !description || !password) {
+    if (!name || !email || !phone || !clubName || !department || !description || !password || !role) {
       return res.status(400).json({ message: 'All registration parameters are required.' });
     }
 
@@ -31,7 +31,8 @@ export const submitCoordinatorRequest = async (req, res) => {
       clubName,
       department,
       description,
-      password: hashPassword(password)
+      password: hashPassword(password),
+      role
     });
 
     res.status(201).json({ message: 'Application request submitted successfully! Pending administrator approval.' });
@@ -74,7 +75,8 @@ export const approveCoordinatorRequest = async (req, res) => {
         clubName: request.clubName,
         department: request.department,
         description: request.description,
-        password: request.password
+        password: request.password,
+        role: request.role
       });
     }
 

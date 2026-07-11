@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { UserPlus, User, Mail, Phone, BookOpen, ShieldAlert, Award, FileText } from 'lucide-react';
+import { UserPlus, User, Mail, Phone, BookOpen, ShieldAlert, Award, FileText, UserCheck } from 'lucide-react';
 
 const BecomeCoordinator = () => {
   const navigate = useNavigate();
@@ -14,7 +14,8 @@ const BecomeCoordinator = () => {
     clubName: '',
     department: '',
     description: '',
-    password: ''
+    password: '',
+    role: ''
   });
   const [loading, setLoading] = useState(false);
 
@@ -156,19 +157,37 @@ const BecomeCoordinator = () => {
               </div>
               <div style={{ flex: '1 1 200px' }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: 'var(--text-dark)', marginBottom: '8px' }}>
-                  <ShieldAlert size={16} color="#4f46e5" />
-                  Portal Password (min 6 chars)
+                  <UserCheck size={16} color="#4f46e5" />
+                  Coordinator Type / Role
                 </label>
-                <input
-                  type="password"
-                  name="password"
+                <select
+                  name="role"
                   className="form-control"
-                  placeholder="Enter login password"
-                  value={formData.password}
+                  value={formData.role}
                   onChange={handleChange}
                   required
-                />
+                >
+                  <option value="">Select role type</option>
+                  <option value="student_coordinator">Student Coordinator</option>
+                  <option value="staff_coordinator">Staff Coordinator</option>
+                </select>
               </div>
+            </div>
+
+            <div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '600', color: 'var(--text-dark)', marginBottom: '8px' }}>
+                <ShieldAlert size={16} color="#4f46e5" />
+                Portal Password (min 6 chars)
+              </label>
+              <input
+                type="password"
+                name="password"
+                className="form-control"
+                placeholder="Enter login password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
             </div>
 
             <div>

@@ -127,9 +127,21 @@ const seedDB = async () => {
       description: 'CampusHub Club Coordinator Lead',
       password: hash,
       status: 'Active',
-      role: 'coordinator'
+      role: 'student_coordinator'
     });
-    console.log('Coordinator seeded (coordinator@campushub.com / coordinator123).');
+
+    await ClubCoordinator.create({
+      name: 'Dr. Staff Mentor',
+      email: 'staff_coord@campushub.com',
+      phone: '9876543222',
+      clubName: 'IEEE Student Branch',
+      department: 'ISE',
+      description: 'Faculty Club Coordinator',
+      password: hash,
+      status: 'Active',
+      role: 'staff_coordinator'
+    });
+    console.log('Coordinators seeded (coordinator@campushub.com / staff_coord@campushub.com).');
 
     // Insert event data
     await EventType.insertMany(eventTypes);

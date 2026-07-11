@@ -29,6 +29,11 @@ const coordinatorRequestSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  role: {
+    type: String,
+    required: true,
+    enum: ['student_coordinator', 'staff_coordinator']
+  },
   status: {
     type: String,
     enum: ['Pending', 'Approved', 'Rejected'],
