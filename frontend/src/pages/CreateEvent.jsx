@@ -19,7 +19,11 @@ const CreateEvent = () => {
     location: '',
     sname: '',
     st_name: '',
-    description: ''
+    description: '',
+    isPublished: true,
+    isArchived: false,
+    maxParticipants: '',
+    registrationDeadline: ''
   });
 
   const handleChange = (e) => {
@@ -27,6 +31,26 @@ const CreateEvent = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleBannerUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      try {
+        const res = await api.post('/events/upload', {
+          imageBase64: reader.result,
+          imageName: file.name
+        });
+        setFormData(prev => ({ ...prev, img_link: res.data.imageUrl }));
+        alert('Banner uploaded successfully!');
+      } catch (err) {
+        alert('Image upload failed.');
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
@@ -70,11 +94,11 @@ const CreateEvent = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ margin: '0', border: '1px solid var(--light-border)', boxShadow: 'var(--shadow-md)', borderRadius: '12px', background: 'var(--bg-card)' }}>
+        <form onSubmit={handleSubmit} style={{ margin: '0', border: '1px solid var(--light-border)', boxShadow: 'var(--shadow-md)', borderRadius: '12px', background: 'var(--bg-card)', padding: '24px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
               <div style={{ flex: '1 1 200px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)' }}>Event Category Type</label>
+                <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Event Category Type</label>
                 <select
                   name="type_id"
                   className="form-control"
@@ -98,7 +122,7 @@ const CreateEvent = () => {
             </div>
 
             <div>
-              <label style={{ fontWeight: '600', color: 'var(--text-dark)' }}>Event Title</label>
+              <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Event Title</label>
               <input
                 type="text"
                 name="event_title"
@@ -111,7 +135,7 @@ const CreateEvent = () => {
             </div>
 
             <div>
-              <label style={{ fontWeight: '600', color: 'var(--text-dark)' }}>Event Description</label>
+              <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Event Description</label>
               <textarea
                 name="description"
                 className="form-control"
@@ -125,7 +149,7 @@ const CreateEvent = () => {
 
             <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
               <div style={{ flex: '1 1 200px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)' }}>Registration Fee (₹)</label>
+                <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Registration Fee (₹)</label>
                 <input
                   type="number"
                   name="event_price"
@@ -137,22 +161,35 @@ const CreateEvent = () => {
                 />
               </div>
               <div style={{ flex: '1 1 200px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)' }}>Image Path</label>
-                <input
-                  type="text"
-                  name="img_link"
-                  className="form-control"
-                  placeholder="e.g. images/technical.jpg"
-                  value={formData.img_link}
-                  onChange={handleChange}
-                  required
-                />
+                <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Image Path / Upload Banner</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input
+                    type="text"
+                    name="img_link"
+                    className="form-control"
+                    placeholder="e.g. images/technical.jpg"
+                    value={formData.img_link}
+                    onChange={handleChange}
+                    required
+                    style={{ flexGrow: 1 }}
+                  />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleBannerUpload}
+                    style={{ display: 'none' }}
+                    id="banner-file-input"
+                  />
+                  <label htmlFor="banner-file-input" className="btn-default" style={{ cursor: 'pointer', padding: '10px 15px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 0, fontSize: '13px' }}>
+                    Upload
+                  </label>
+                </div>
               </div>
             </div>
 
             <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
               <div style={{ flex: '1 1 200px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)' }}>Date</label>
+                <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Date</label>
                 <input
                   type="date"
                   name="Date"
@@ -163,7 +200,7 @@ const CreateEvent = () => {
                 />
               </div>
               <div style={{ flex: '1 1 200px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)' }}>Time</label>
+                <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Time</label>
                 <input
                   type="text"
                   name="time"
@@ -177,7 +214,7 @@ const CreateEvent = () => {
             </div>
 
             <div>
-              <label style={{ fontWeight: '600', color: 'var(--text-dark)' }}>Venue Location</label>
+              <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Venue Location</label>
               <input
                 type="text"
                 name="location"
@@ -191,7 +228,7 @@ const CreateEvent = () => {
 
             <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
               <div style={{ flex: '1 1 200px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)' }}>Staff Coordinator Name</label>
+                <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Staff Coordinator Name</label>
                 <input
                   type="text"
                   name="sname"
@@ -203,7 +240,7 @@ const CreateEvent = () => {
                 />
               </div>
               <div style={{ flex: '1 1 200px' }}>
-                <label style={{ fontWeight: '600', color: 'var(--text-dark)' }}>Student Coordinator Name</label>
+                <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Student Coordinator Name</label>
                 <input
                   type="text"
                   name="st_name"
@@ -216,10 +253,58 @@ const CreateEvent = () => {
               </div>
             </div>
 
-            <div style={{ marginTop: '15px', display: 'flex', gap: '15px' }}>
+            <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+              <div style={{ flex: '1 1 200px' }}>
+                <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Max Participants (0 for unlimited)</label>
+                <input
+                  type="number"
+                  name="maxParticipants"
+                  className="form-control"
+                  placeholder="e.g. 100"
+                  value={formData.maxParticipants}
+                  onChange={handleChange}
+                />
+              </div>
+              <div style={{ flex: '1 1 200px' }}>
+                <label style={{ fontWeight: '600', color: 'var(--text-dark)', display: 'block', marginBottom: '6px' }}>Registration Deadline Date</label>
+                <input
+                  type="date"
+                  name="registrationDeadline"
+                  className="form-control"
+                  value={formData.registrationDeadline}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginTop: '10px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '600', color: 'var(--text-dark)' }}>
+                <input
+                  type="checkbox"
+                  name="isPublished"
+                  checked={formData.isPublished}
+                  onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
+                  style={{ width: '18px', height: '18px' }}
+                />
+                Publish Immediately
+              </label>
+
+              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontWeight: '600', color: 'var(--text-dark)' }}>
+                <input
+                  type="checkbox"
+                  name="isArchived"
+                  checked={formData.isArchived}
+                  onChange={(e) => setFormData({ ...formData, isArchived: e.target.checked })}
+                  style={{ width: '18px', height: '18px' }}
+                />
+                Archive Event (hidden from students)
+              </label>
+            </div>
+
+            <div style={{ marginTop: '20px', display: 'flex', gap: '15px' }}>
               <button type="submit" className="btn-default" style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 <PlusCircle size={18} />
-                Publish Event
+                Create and Publish Event
               </button>
             </div>
           </div>

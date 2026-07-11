@@ -38,6 +38,10 @@ const clubCoordinatorSchema = new mongoose.Schema({
     type: String,
     default: 'coordinator'
   },
+  lastLogin: {
+    type: Date,
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now

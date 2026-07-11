@@ -4,7 +4,7 @@ import api from '../api';
 import AdminNavbar from '../components/AdminNavbar';
 import CoordinatorNavbar from '../components/CoordinatorNavbar';
 import Footer from '../components/Footer';
-import { Calendar, Clock, MapPin, Tag, User, ShieldAlert, ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { Calendar, Clock, MapPin, Tag, User, ShieldAlert, ArrowLeft, Edit, Trash2, Copy, Eye, EyeOff, Archive, Inbox } from 'lucide-react';
 import EventImage from '../components/EventImage';
 
 const AdminEventDetails = () => {
@@ -42,6 +42,41 @@ const AdminEventDetails = () => {
       } catch (err) {
         alert(err.response?.data?.message || 'Error deleting event.');
       }
+    }
+  };
+
+  const handleDuplicate = async () => {
+    if (window.confirm('Are you sure you want to duplicate this event? A new copy will be created.')) {
+      try {
+        const res = await api.post(`/events/${eventId}/duplicate`);
+        alert(res.data.message || 'Event duplicated successfully!');
+        navigate(role === 'admin' ? `/admin/events/${res.data.event_id}` : `/coordinator/events/${res.data.event_id}`);
+        window.location.reload();
+      } catch (err) {
+        alert(err.response?.data?.message || 'Failed to duplicate event.');
+      }
+    }
+  };
+
+  const handlePublishToggle = async () => {
+    const nextPublished = !event.isPublished;
+    try {
+      await api.put(`/events/${eventId}`, { isPublished: nextPublished });
+      alert(`Event ${nextPublished ? 'published' : 'unpublished'} successfully!`);
+      fetchEventDetails();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update publication status.');
+    }
+  };
+
+  const handleArchiveToggle = async () => {
+    const nextArchived = !event.isArchived;
+    try {
+      await api.put(`/events/${eventId}`, { isArchived: nextArchived });
+      alert(`Event ${nextArchived ? 'archived' : 'unarchived'} successfully!`);
+      fetchEventDetails();
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to update archive status.');
     }
   };
 
@@ -120,7 +155,26 @@ const AdminEventDetails = () => {
                   <h1 style={{ fontSize: '32px', fontFamily: 'Outfit, sans-serif', fontWeight: 800, color: 'var(--text-dark)', margin: '0 0 6px 0' }}>
                     {event.event_title}
                   </h1>
-                  <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '600' }}>Event ID: {event.event_id}</span>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '6px', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <span style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '600', marginRight: '8px' }}>Event ID: {event.event_id}</span>
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      textTransform: 'uppercase',
+                      background: event.isPublished ? 'rgba(16, 185, 129, 0.1)' : 'rgba(100, 116, 139, 0.1)',
+                      color: event.isPublished ? '#10b981' : '#64748b',
+                      border: `1px solid ${event.isPublished ? 'rgba(16, 185, 129, 0.2)' : 'rgba(100, 116, 139, 0.2)'}`
+                    }}>
+                      {event.isPublished ? 'Published' : 'Draft / Unpublished'}
+                    </span>
+                    {event.isArchived && (
+                      <span style={{ fontSize: '11px', fontWeight: '700', padding: '2px 8px', borderRadius: '4px', textTransform: 'uppercase', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                        Archived
+                      </span>
+                    )}
+                  </div>
                 </div>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
@@ -129,7 +183,7 @@ const AdminEventDetails = () => {
                     <span>Fee: ₹{event.event_price}</span>
                   </div>
                   <span style={{ fontSize: '13px', color: '#10b981', fontWeight: '700' }}>
-                    👥 Registered Participants: {event.participents}
+                    👥 Registered Participants: {event.participents} {event.maxParticipants ? `/ ${event.maxParticipants}` : ''}
                   </span>
                 </div>
               </div>
@@ -144,7 +198,24 @@ const AdminEventDetails = () => {
                 </p>
               </div>
 
-              {/* Logistics Grid */}
+              {/* Event Limits and Deadline Settings Display */}
+              <div style={{
+                margin: '0 0 35px 0',
+                padding: '20px',
+                borderRadius: '8px',
+                border: '1px dashed var(--light-border)',
+                background: 'var(--bg-base)',
+                fontSize: '14px',
+                color: 'var(--text-dark)',
+                textAlign: 'left'
+              }}>
+                <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                  <span><strong>Max Participant Limit:</strong> {event.maxParticipants ? `${event.maxParticipants} students` : 'Unlimited'}</span>
+                  <span><strong>Registration Deadline:</strong> {event.registrationDeadline ? new Date(event.registrationDeadline).toLocaleDateString() : 'No Deadline'}</span>
+                </div>
+              </div>
+
+              {/* Event Logistics Grid */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
@@ -180,15 +251,15 @@ const AdminEventDetails = () => {
                     <MapPin size={18} color="#4f46e5" />
                   </div>
                   <div>
-                    <span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase' }}>Location / Venue</span>
+                    <span style={{ display: 'block', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600', textTransform: 'uppercase' }}>Venue</span>
                     <strong style={{ fontSize: '15px', color: 'var(--text-dark)' }}>{event.location || 'TBA'}</strong>
                   </div>
                 </div>
               </div>
 
               {/* Coordinators Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px', marginBottom: '40px' }}>
-                {/* Student Lead */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px', marginBottom: '40px' }}>
+                {/* Student Coordinator */}
                 <div style={{ border: '1px solid var(--light-border)', borderRadius: '8px', padding: '20px' }}>
                   <h4 style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '15px', fontWeight: '700', color: 'var(--text-dark)', margin: '0 0 12px 0' }}>
                     <User size={16} color="#4f46e5" />
@@ -215,20 +286,42 @@ const AdminEventDetails = () => {
 
               {/* Admin Actions Button Layout */}
               {(() => {
-                // isOwner: admin always has access; coordinator only if they created the event
                 const isOwner = role === 'admin' || event.createdBy === email;
                 return (
-                  <div style={{ display: 'flex', gap: '15px', borderTop: '1px solid var(--light-border)', paddingTop: '30px', flexWrap: 'wrap' }}>
-                    <Link to={dashboardPath} className="btn-default" style={{ background: 'var(--bg-card)', border: '1px solid var(--light-border)', color: 'var(--text-dark)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', flexGrow: '1', padding: '12px' }}>
-                      <ArrowLeft size={16} />
-                      Dashboard
-                    </Link>
+                  <div style={{ display: 'flex', gap: '12px', borderTop: '1px solid var(--light-border)', paddingTop: '30px', flexWrap: 'wrap' }}>
                     {isOwner && (
                       <>
                         <Link to={role === 'admin' ? `/admin/events/update/${event.event_id}` : `/coordinator/events/update/${event.event_id}`} className="btn-default" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', flexGrow: '1', padding: '12px' }}>
                           <Edit size={16} />
-                          Edit Event
+                          Edit
                         </Link>
+                        <button
+                          type="button"
+                          onClick={handleDuplicate}
+                          className="btn-default"
+                          style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.2)', color: '#059669', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', flexGrow: '1', padding: '12px' }}
+                        >
+                          <Copy size={16} />
+                          Duplicate
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handlePublishToggle}
+                          className="btn-default"
+                          style={{ background: 'rgba(245, 158, 11, 0.08)', border: '1px solid rgba(245, 158, 11, 0.2)', color: '#d97706', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', flexGrow: '1', padding: '12px' }}
+                        >
+                          {event.isPublished ? <EyeOff size={16} /> : <Eye size={16} />}
+                          {event.isPublished ? 'Unpublish' : 'Publish'}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleArchiveToggle}
+                          className="btn-default"
+                          style={{ background: 'rgba(100, 116, 139, 0.08)', border: '1px solid rgba(100, 116, 139, 0.2)', color: '#475569', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', flexGrow: '1', padding: '12px' }}
+                        >
+                          {event.isArchived ? <Inbox size={16} /> : <Archive size={16} />}
+                          {event.isArchived ? 'Unarchive' : 'Archive'}
+                        </button>
                         <button
                           type="button"
                           onClick={handleDelete}

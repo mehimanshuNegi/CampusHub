@@ -41,6 +41,19 @@ export const registerParticipant = async (req, res) => {
 
     const isFree = !event.event_price || Number(event.event_price) === 0;
 
+    // Enforce participant limits
+    if (event.maxParticipants && event.maxParticipants > 0) {
+      const currentParticipants = await Participant.countDocuments({ event_id });
+      if (currentParticipants >= event.maxParticipants) {
+        return res.status(400).json({ message: 'Registration Closed: Maximum participant limit reached.' });
+      }
+    }
+
+    // Enforce registration deadlines
+    if (event.registrationDeadline && new Date() > new Date(event.registrationDeadline)) {
+      return res.status(400).json({ message: 'Registration Closed: The registration deadline has passed.' });
+    }
+
     // For paid events, transaction ID is required
     if (!isFree && !transactionId) {
       return res.status(400).json({ message: 'Transaction ID is required for paid events' });
@@ -89,6 +102,10 @@ export const verifyRegistrationDetails = async (req, res) => {
 
     if (participant.registration_password !== registration_password) {
       return res.status(400).json({ message: 'Incorrect registration password' });
+    }
+
+    if (participant.status === 'Suspended') {
+      return res.status(403).json({ message: 'Access Denied: Your account is suspended.' });
     }
 
     const event = await Event.findOne({ event_id: participant.event_id });

@@ -3,6 +3,13 @@ import EventInfo from '../models/EventInfo.js';
 import StudentCoordinator from '../models/StudentCoordinator.js';
 import StaffCoordinator from '../models/StaffCoordinator.js';
 import Participant from '../models/Participant.js';
+import { activeSessions } from '../middleware/auth.js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Helper function to dynamically generate sequential unique event IDs
 const generateNextEventId = async () => {
@@ -61,9 +68,15 @@ export const getEventsByType = async (req, res) => {
   try {
     const type_id_param = req.params.type_id;
     const events = await Event.find({
-      $or: [
-        { type_id: type_id_param },
-        { type_id: parseInt(type_id_param) || 0 }
+      $and: [
+        {
+          $or: [
+            { type_id: type_id_param },
+            { type_id: parseInt(type_id_param) || 0 }
+          ]
+        },
+        { isArchived: { $ne: true } },
+        { isPublished: { $ne: false } }
       ]
     });
     
@@ -95,7 +108,22 @@ export const getEventsByType = async (req, res) => {
 
 export const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find({});
+    const authHeader = req.headers['authorization'];
+    let token = authHeader ? authHeader.split(' ')[1] : null;
+    if (!token) {
+      token = req.headers['x-auth-token'] || req.body.token || req.query.token;
+    }
+    const isAdmin = token && activeSessions[token] && activeSessions[token].role === 'admin';
+
+    let query = {};
+    if (!isAdmin) {
+      query = {
+        isArchived: { $ne: true },
+        isPublished: { $ne: false }
+      };
+    }
+
+    const events = await Event.find(query);
     const detailedEvents = await Promise.all(
       events.map(async (event) => {
         const info = await EventInfo.findOne({ event_id: event.event_id });
@@ -156,7 +184,22 @@ export const createEvent = async (req, res) => {
   let retries = 5;
   while (retries > 0) {
     try {
-      const { event_title, event_price, img_link, type_id, Date, time, location, sname, st_name, description } = req.body;
+      const {
+        event_title,
+        event_price,
+        img_link,
+        type_id,
+        Date: dateVal,
+        time,
+        location,
+        sname,
+        st_name,
+        description,
+        isPublished,
+        isArchived,
+        maxParticipants,
+        registrationDeadline
+      } = req.body;
 
       // Auto-generate unique Event ID inside backend
       const event_id = await generateNextEventId();
@@ -169,12 +212,16 @@ export const createEvent = async (req, res) => {
         img_link: img_link || 'images/cs03.jpg',
         type_id: parseInt(type_id) || 1,
         participents: 0,
-        createdBy: req.user ? (req.user.role === 'admin' ? 'admin' : req.user.email) : 'admin'
+        createdBy: req.user ? (req.user.role === 'admin' ? 'admin' : req.user.email) : 'admin',
+        isPublished: isPublished !== undefined ? isPublished : true,
+        isArchived: isArchived !== undefined ? isArchived : false,
+        maxParticipants: maxParticipants ? parseInt(maxParticipants) : null,
+        registrationDeadline: registrationDeadline ? new Date(registrationDeadline) : null
       });
 
       await EventInfo.create({
         event_id,
-        Date,
+        Date: dateVal,
         time,
         location
       });
@@ -235,7 +282,22 @@ export const deleteEvent = async (req, res) => {
 export const updateEvent = async (req, res) => {
   try {
     const event_id = req.params.event_id;
-    const { event_title, event_price, img_link, type_id, Date, time, location, sname, st_name, description } = req.body;
+    const {
+      event_title,
+      event_price,
+      img_link,
+      type_id,
+      Date: dateVal,
+      time,
+      location,
+      sname,
+      st_name,
+      description,
+      isPublished,
+      isArchived,
+      maxParticipants,
+      registrationDeadline
+    } = req.body;
 
     const event = await Event.findOne({ event_id });
     if (!event) {
@@ -251,11 +313,15 @@ export const updateEvent = async (req, res) => {
       description,
       event_price: parseFloat(event_price) || 0,
       img_link: img_link || 'images/cs03.jpg',
-      type_id: parseInt(type_id) || 1
+      type_id: parseInt(type_id) || 1,
+      isPublished: isPublished !== undefined ? isPublished : event.isPublished,
+      isArchived: isArchived !== undefined ? isArchived : event.isArchived,
+      maxParticipants: maxParticipants !== undefined ? (maxParticipants ? parseInt(maxParticipants) : null) : event.maxParticipants,
+      registrationDeadline: registrationDeadline !== undefined ? (registrationDeadline ? new Date(registrationDeadline) : null) : event.registrationDeadline
     });
 
     await EventInfo.updateOne({ event_id }, {
-      Date,
+      Date: dateVal,
       time,
       location
     });
@@ -271,5 +337,98 @@ export const updateEvent = async (req, res) => {
     res.json({ message: 'Event Updated Successfully!' });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+// POST /api/events/:event_id/duplicate
+export const duplicateEvent = async (req, res) => {
+  try {
+    const { event_id } = req.params;
+    const originalEvent = await Event.findOne({ event_id });
+    if (!originalEvent) {
+      return res.status(404).json({ message: 'Original event not found' });
+    }
+
+    const originalInfo = await EventInfo.findOne({ event_id });
+    const originalStudent = await StudentCoordinator.findOne({ event_id });
+    const originalStaff = await StaffCoordinator.findOne({ event_id });
+
+    const newEventId = await generateNextEventId();
+
+    await Event.create({
+      event_id: newEventId,
+      event_title: `${originalEvent.event_title} (Copy)`,
+      description: originalEvent.description,
+      event_price: originalEvent.event_price,
+      img_link: originalEvent.img_link,
+      type_id: originalEvent.type_id,
+      createdBy: req.user ? (req.user.role === 'admin' ? 'admin' : req.user.email) : originalEvent.createdBy,
+      isPublished: false, // Default to unpublished so user can check
+      isArchived: false,
+      maxParticipants: originalEvent.maxParticipants,
+      registrationDeadline: originalEvent.registrationDeadline
+    });
+
+    if (originalInfo) {
+      await EventInfo.create({
+        event_id: newEventId,
+        Date: originalInfo.Date,
+        time: originalInfo.time,
+        location: originalInfo.location
+      });
+    }
+
+    if (originalStudent) {
+      await StudentCoordinator.create({
+        sid: newEventId,
+        st_name: originalStudent.st_name,
+        phone: originalStudent.phone,
+        event_id: newEventId
+      });
+    }
+
+    if (originalStaff) {
+      await StaffCoordinator.create({
+        stid: newEventId,
+        name: originalStaff.name,
+        phone: originalStaff.phone,
+        event_id: newEventId
+      });
+    }
+
+    res.status(201).json({ message: 'Event duplicated successfully!', event_id: newEventId });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// POST /api/events/upload
+export const uploadBanner = async (req, res) => {
+  try {
+    const { imageBase64, imageName } = req.body;
+    if (!imageBase64 || !imageName) {
+      return res.status(400).json({ message: 'Image data and name are required' });
+    }
+
+    const base64Data = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    const ext = path.extname(imageName) || '.jpg';
+    const filename = `banner-${Date.now()}${ext}`;
+
+    const targetDir = path.join(__dirname, '../../frontend/public/images/uploads');
+    if (!fs.existsSync(targetDir)) {
+      fs.mkdirSync(targetDir, { recursive: true });
+    }
+
+    const filePath = path.join(targetDir, filename);
+    fs.writeFileSync(filePath, buffer);
+
+    res.json({
+      message: 'Banner uploaded successfully',
+      imageUrl: `images/uploads/${filename}`
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Upload failed: ' + error.message });
   }
 };

@@ -9,6 +9,15 @@ const adminSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  name: {
+    type: String,
+    default: 'Administrator'
+  },
+  status: {
+    type: String,
+    enum: ['Active', 'Suspended'],
+    default: 'Active'
   }
 }, { timestamps: false });
 

@@ -25,6 +25,8 @@ import ContactUs from './pages/ContactUs';
 import AdminSettings from './pages/AdminSettings';
 import PaymentVerification from './pages/PaymentVerification';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminUserManagement from './pages/AdminUserManagement';
+import AdminCoordinatorManagement from './pages/AdminCoordinatorManagement';
 
 // Redirection helper for viewEvent.php?id=<id> -> /events/type/:typeId
 const NavigateToEventsList = () => {
@@ -68,6 +70,8 @@ function App() {
         {/* Protected Admin Portal routes */}
         <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/requests" element={<ProtectedRoute allowedRoles={['admin']}><CoordinatorRequestsList /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><AdminUserManagement /></ProtectedRoute>} />
+        <Route path="/admin/coordinators" element={<ProtectedRoute allowedRoles={['admin']}><AdminCoordinatorManagement /></ProtectedRoute>} />
         <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={['admin']}><AdminSettings /></ProtectedRoute>} />
         <Route path="/admin/students" element={<ProtectedRoute allowedRoles={['admin']}><StudentDetailsList /></ProtectedRoute>} />
         <Route path="/admin/coordinators/student" element={<ProtectedRoute allowedRoles={['admin']}><StudentCoordinatorsList /></ProtectedRoute>} />

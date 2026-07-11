@@ -23,11 +23,10 @@ const AdminNavbar = () => {
 
   const navLinks = [
     { to: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-    { to: '/admin/requests', label: 'Coordinator Requests', icon: UserCheck },
+    { to: '/admin/users', label: 'User Management', icon: Users },
+    { to: '/admin/coordinators', label: 'Coordinator Management', icon: UserCheck },
     { to: '/admin/payments', label: 'Payment Verification', icon: CreditCard },
     { to: '/admin/students', label: 'Registered Students', icon: GraduationCap },
-    { to: '/admin/coordinators/student', label: 'Student Co-ordinators', icon: Users },
-    { to: '/admin/coordinators/staff', label: 'Staff Co-ordinators', icon: ShieldAlert },
     { to: '/admin/settings', label: 'Account Settings', icon: Settings }
   ];
 

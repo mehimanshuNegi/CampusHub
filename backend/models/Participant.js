@@ -47,6 +47,11 @@ const participantSchema = new mongoose.Schema({
     type: String,
     enum: ['Pending', 'Verified', 'Rejected'],
     default: 'Pending'
+  },
+  status: {
+    type: String,
+    enum: ['Active', 'Suspended'],
+    default: 'Active'
   }
 }, { timestamps: true });
 

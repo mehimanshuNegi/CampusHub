@@ -1,4 +1,5 @@
 import express from 'express';
+import fs from 'fs';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
@@ -8,9 +9,10 @@ import eventRoutes from './routes/eventRoutes.js';
 import participantRoutes from './routes/participantRoutes.js';
 import coordinatorRoutes from './routes/coordinatorRoutes.js';
 import clubCoordinatorRoutes from './routes/clubCoordinatorRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import Admin from './models/Admin.js';
 import ClubCoordinator from './models/ClubCoordinator.js';
-import { activeSessions, hashPassword, comparePassword } from './middleware/auth.js';
+import { activeSessions, hashPassword, comparePassword, authenticateToken } from './middleware/auth.js';
 
 dotenv.config();
 
@@ -39,6 +41,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/participants', participantRoutes);
 app.use('/api/coordinators', coordinatorRoutes);
 app.use('/api/club-coordinators', clubCoordinatorRoutes);
+app.use('/api/admin', authenticateToken(['admin']), adminRoutes);
 
 // Unified Authentication Endpoint (Admins & Club Coordinators)
 app.post('/api/auth/login', async (req, res) => {
@@ -51,18 +54,21 @@ app.post('/api/auth/login', async (req, res) => {
     // 1. Check Admin Database
     const admin = await Admin.findOne({ email });
     if (admin && comparePassword(password, admin.password)) {
+      if (admin.status === 'Suspended') {
+        return res.status(403).json({ message: 'Access Denied: Your account is suspended.' });
+      }
       const token = 'ADM-' + Math.random().toString(36).substring(2) + Date.now().toString(36);
       activeSessions[token] = {
         email: admin.email,
         role: 'admin',
-        name: 'Administrator'
+        name: admin.name || 'Administrator'
       };
 
       return res.json({
         message: 'Login Successfull',
         email: admin.email,
         role: 'admin',
-        name: 'Administrator',
+        name: admin.name || 'Administrator',
         token
       });
     }
@@ -70,6 +76,13 @@ app.post('/api/auth/login', async (req, res) => {
     // 2. Check Club Coordinator Database
     const coordinator = await ClubCoordinator.findOne({ email });
     if (coordinator && comparePassword(password, coordinator.password)) {
+      if (coordinator.status === 'Suspended') {
+        return res.status(403).json({ message: 'Access Denied: Your account is suspended.' });
+      }
+      // Update lastLogin
+      coordinator.lastLogin = new Date();
+      await coordinator.save();
+
       const token = 'CO-' + Math.random().toString(36).substring(2) + Date.now().toString(36);
       activeSessions[token] = {
         email: coordinator.email,
@@ -168,6 +181,18 @@ app.put('/api/auth/settings', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+// Serve static frontend files in production fallback
+const distPath = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
 
 const PORT = process.env.PORT || 5000;
 

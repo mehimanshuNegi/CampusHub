@@ -194,15 +194,71 @@ const EventDetails = () => {
                 </div>
               </div>
 
+              {/* Event Limits and Deadline Info */}
+              <div style={{
+                margin: '0 0 30px 0',
+                padding: '20px',
+                borderRadius: '8px',
+                border: '1px dashed var(--light-border)',
+                background: 'var(--bg-base)',
+                fontSize: '14px',
+                color: 'var(--text-dark)',
+                textAlign: 'left'
+              }}>
+                <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                  <span><strong>Max Capacity:</strong> {event.maxParticipants ? `${event.maxParticipants} students` : 'Unlimited'}</span>
+                  <span><strong>Current Registrations:</strong> {event.participents} {event.maxParticipants ? `/ ${event.maxParticipants}` : ''}</span>
+                </div>
+                {event.registrationDeadline && (
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span><strong>Registration Deadline:</strong></span>
+                    <span style={{ fontWeight: '700', color: new Date() > new Date(event.registrationDeadline) ? '#ef4444' : 'var(--text-dark)' }}>
+                      {new Date(event.registrationDeadline).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
+              </div>
+
               {/* Register Button */}
               <div style={{ borderTop: '1px solid var(--light-border)', paddingTop: '30px', textAlign: 'center' }}>
-                <Link
-                  to={`/register/${event.event_id}`}
-                  className="btn-default"
-                  style={{ textDecoration: 'none', display: 'inline-block', fontSize: '15px', padding: '14px 40px', borderRadius: '8px' }}
-                >
-                  Register Now
-                </Link>
+                {(() => {
+                  const isFull = event.maxParticipants && event.participents >= event.maxParticipants;
+                  const isDeadlinePassed = event.registrationDeadline && new Date() > new Date(event.registrationDeadline);
+
+                  if (isFull) {
+                    return (
+                      <button
+                        className="btn-default"
+                        disabled
+                        style={{ background: '#64748b', cursor: 'not-allowed', display: 'inline-block', fontSize: '15px', padding: '14px 40px', borderRadius: '8px', border: '1px solid #64748b', color: '#ffffff' }}
+                      >
+                        Registration Closed (Full)
+                      </button>
+                    );
+                  }
+
+                  if (isDeadlinePassed) {
+                    return (
+                      <button
+                        className="btn-default"
+                        disabled
+                        style={{ background: '#64748b', cursor: 'not-allowed', display: 'inline-block', fontSize: '15px', padding: '14px 40px', borderRadius: '8px', border: '1px solid #64748b', color: '#ffffff' }}
+                      >
+                        Registration Closed (Deadline Passed)
+                      </button>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      to={`/register/${event.event_id}`}
+                      className="btn-default"
+                      style={{ textDecoration: 'none', display: 'inline-block', fontSize: '15px', padding: '14px 40px', borderRadius: '8px' }}
+                    >
+                      Register Now
+                    </Link>
+                  );
+                })()}
               </div>
             </div>
           </div>
