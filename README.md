@@ -253,6 +253,43 @@ https://campushub-lf3v.onrender.com/api/events
 
 ---
 
+# 🔑 Demo Credentials
+
+## 👨‍💻 Administrator
+
+| Field | Value |
+|-------|-------|
+| **Email** | `admin@campushub.com` |
+| **Password** | `admin123` |
+
+---
+
+## 👨‍💼 Club Coordinator
+
+| Field | Value |
+|-------|-------|
+| **Email** | `coordinator@campushub.com` |
+| **Password** | `coordinator123` |
+
+---
+
+## 👨‍🎓 Student (Demo Workflow)
+
+Students do **not** require an account.
+
+Simply:
+
+- Browse Events
+- Register for an Event
+- Receive an auto-generated **Registration ID**
+- Use the **Registration ID** and **Registration Password** to:
+  - View Registration Details
+  - Cancel Registration (if required)
+
+> **Note:** Registration IDs are generated automatically after successful registration.
+
+---
+
 # 🔒 Security
 
 - ✅ JWT Authentication
